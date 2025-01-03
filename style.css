@@ -1,0 +1,26 @@
+/* Style the custom div to take full width */
+.custom-container {
+    width: 100% !important;
+    padding: 10px;
+    margin: 0 auto;
+    overflow-x: auto;  /* Ensure horizontal scrolling for wide tables */
+}
+
+/* Optional: Make dataframes have border and padding for better visibility */
+.custom-container table {
+    width: 100% !important;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+/* Optional: Make the table cells look nicer */
+.custom-container th, .custom-container td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+/* Optional: Highlight the header row */
+.custom-container th {
+    background-color: #f2f2f2;
+}
