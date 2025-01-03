@@ -144,7 +144,6 @@ if type_a_file is not None and type_b_file is not None:
                     xaxis=dict(title='Values'),
                     yaxis=dict(title='Furniture Assets'),
                     height=height,
-                    width=max,
                     annotations=[
                         dict(
                             x=0.5, y=0.5,
@@ -207,7 +206,6 @@ if type_a_file is not None and type_b_file is not None:
                     xaxis=dict(title='Values'),
                     yaxis=dict(title='Furniture Assets'),
                     height=height,
-                    width=max,
                     shapes=[
                         dict(
                             type='line',
@@ -268,7 +266,6 @@ if type_a_file is not None and type_b_file is not None:
                     xaxis=dict(title='Values'),
                     yaxis=dict(title='Furniture Assets'),
                     height=height,
-                    width=max,
                     annotations=[
                         dict(
                             x=0.5, y=0.5,
@@ -326,7 +323,6 @@ if type_a_file is not None and type_b_file is not None:
                     xaxis=dict(title='Values'),
                     yaxis=dict(title='Furniture Assets'),
                     height=height,
-                    width=max,
                     shapes=[
                         dict(
                             type='line',
