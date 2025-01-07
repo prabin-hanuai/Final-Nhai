@@ -54,3 +54,10 @@ def preprocess_chainage(chainage_value):
 def preprocess_chainages(chainage_value):
     parts = chainage_value.replace(" ", "").split('-')
     return '-'.join(parts)
+
+def get_text_position(value, max_value):
+    # Use inside if the bar is too short
+    if abs(value) < max_value * 0.3:  # Arbitrary threshold, 30% of the max value
+        return 'inside'
+    else:
+        return 'outside'
