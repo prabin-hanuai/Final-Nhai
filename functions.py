@@ -43,7 +43,39 @@ def RA_preprocess(temp):
         final_data[f'{_} (Avenue/Left)'] = final_data[avenue_left_col] + final_data[overhead_col]
         final_data.drop(columns = [overhead_col],inplace = True)
     final_data['Chainage'] = final_data['Chainage'].apply(preprocess_chainages)
-    return final_data
+    
+    # Step 1: Create a dictionary for the new column names
+    columns_map = {
+        'Chevron': ['Chevron (Avenue/Left)', 'Chevron (Median/Right)'],
+        'Cautionary Warning Signs': ['Cautionary Warning Signs (Avenue/Left)', 'Cautionary Warning Signs (Median/Right)'],
+        'Hazard': ['Hazard (Avenue/Left)', 'Hazard (Median/Right)'],
+        'Prohibitory Mandatory Signs': ['Prohibitory Mandatory Signs (Avenue/Left)', 'Prohibitory Mandatory Signs (Median/Right)'],
+        'Informatory Signs': ['Informatory Signs (Avenue/Left)', 'Informatory Signs (Median/Right)']
+    }
+
+    # Step 2: Convert relevant columns from string to numeric
+    for col in final_data.columns:
+        if col not in ['Chainage', 'Road Section']:
+            final_data[col] = pd.to_numeric(final_data[col], errors='coerce')  # Convert to numeric, invalid parsing will be set as NaN
+
+    # Step 3: Create a new DataFrame
+    final_data_new = pd.DataFrame()
+
+    # Copy unchanged columns first
+    final_data_new[['Chainage', 'Road Section']] = final_data[['Chainage', 'Road Section']]
+
+    # Step 4: Efficiently aggregate columns based on the `columns_map`
+    for new_col, old_cols in columns_map.items():
+        final_data_new[new_col] = final_data[old_cols].sum(axis=1)
+
+    # Display the final DataFrame
+    print(final_data_new)
+
+
+
+
+
+    return final_data,final_data_new
 
 
 def preprocess_chainage(chainage_value):
