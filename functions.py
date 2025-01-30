@@ -16,6 +16,7 @@ def RA_preprocess(temp):
     furniture_assets = ['Chevron','Cautionary Warning Signs','Hazard','Prohibitory Mandatory Signs','Informatory Signs']
     overhead = []
     for type in furniture_assets:
+        
         try:
             _data = temp['Furniture Chainage Report']['Furniture Assets'][type]
             for column in _data.columns:
@@ -28,6 +29,8 @@ def RA_preprocess(temp):
                     Furniture_Chainage_Report[f'{type} (Median/Right)'] = _data[column].to_list()
         except:
             continue
+
+
     
     
     final_data = pd.DataFrame(Furniture_Chainage_Report)

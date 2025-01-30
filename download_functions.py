@@ -129,3 +129,131 @@ def set_cell_background_color(cell, color_hex):
     shading = OxmlElement('w:shd')
     shading.set(qn('w:fill'), color_hex)  # Set the fill color with the hex code
     cell_element.get_or_add_tcPr().append(shading) 
+
+
+def create_word_doc_new(moretables,morecharts ,data_new, file_name="Chainage_Wise_Analyzed_Data.docx"):
+    doc = Document()
+    print('more tables',moretables)
+    for key,data in moretables.items():
+        doc.add_heading(key, level=2)
+        gap_table = doc.add_table(rows=1, cols=len(data.columns))
+
+        hdr_cells = gap_table.rows[0].cells
+        for i, col in enumerate(data.columns):
+            hdr_cells[i].text = col
+            hdr_cells[i].paragraphs[0].runs[0].bold = True
+            set_cell_background_color(hdr_cells[i], 'fcfcfc')
+
+        for index, row in data.iterrows():
+            row_cells = gap_table.add_row().cells
+            for i, val in enumerate(row):
+                if isinstance(val, float) and val.is_integer():
+                    row_cells[i].text = str(int(val))
+                else:
+                    row_cells[i].text = str(val)
+            if index % 2 == 0:
+                for cell in row_cells:
+                    set_cell_background_color(cell, 'fcfcfc')
+            else:
+                for cell in row_cells:
+                    set_cell_background_color(cell, 'fcfcfc')
+
+            for cell in row_cells:
+                cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+        doc.add_page_break()
+
+    for fig in morecharts:
+        img_stream = save_chart_to_image(fig)
+        doc.add_picture(img_stream, width=Inches(5.5)) 
+
+    doc.add_page_break()
+
+    doc.add_heading('Chainage Wise Gap Analysis', 0)
+
+    for chainage, (data, figs) in data_new.items():
+        doc.add_heading(f"Chainage: {chainage}", level=1)
+        
+        # # **Table 1: PIU Data**
+        # doc.add_heading("PIU Data:", level=2)
+        # table1 = doc.add_table(rows=1, cols=len(transposed_data1.columns))
+
+        # hdr_cells = table1.rows[0].cells
+        # for i, col in enumerate(transposed_data1.columns):
+        #     hdr_cells[i].text = col
+        #     hdr_cells[i].paragraphs[0].runs[0].bold = True
+        #     set_cell_background_color(hdr_cells[i], 'ADD8E6')
+
+        # for index, row in transposed_data1.iterrows():
+        #     row_cells = table1.add_row().cells
+        #     for i, val in enumerate(row):
+        #         row_cells[i].text = str(val)
+        #     if index % 2 == 0:
+        #         for cell in row_cells:
+        #             set_cell_background_color(cell, 'F0F8FF')
+        #     else:
+        #         for cell in row_cells:
+        #             set_cell_background_color(cell, 'FFFFFF')
+
+        #     for cell in row_cells:
+        #         cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+        # # **Table 2: RA Data**
+        # doc.add_heading("RA Data:", level=2)
+        # table2 = doc.add_table(rows=1, cols=len(transposed_data2.columns))
+
+        # hdr_cells = table2.rows[0].cells
+        # for i, col in enumerate(transposed_data2.columns):
+        #     hdr_cells[i].text = col
+        #     hdr_cells[i].paragraphs[0].runs[0].bold = True
+        #     set_cell_background_color(hdr_cells[i], 'ADD8E6')
+
+        # for index, row in transposed_data2.iterrows():
+        #     row_cells = table2.add_row().cells
+        #     for i, val in enumerate(row):
+        #         row_cells[i].text = str(val)
+        #     if index % 2 == 0:
+        #         for cell in row_cells:
+        #             set_cell_background_color(cell, 'F0F8FF')
+        #     else:
+        #         for cell in row_cells:
+        #             set_cell_background_color(cell, 'FFFFFF')
+
+        #     for cell in row_cells:
+        #         cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+        # **Gap Analysis Table**
+        doc.add_heading("Gap Analysis:", level=2)
+        gap_table = doc.add_table(rows=1, cols=len(data.columns))
+
+        hdr_cells = gap_table.rows[0].cells
+        for i, col in enumerate(data.columns):
+            hdr_cells[i].text = col
+            hdr_cells[i].paragraphs[0].runs[0].bold = True
+            set_cell_background_color(hdr_cells[i], 'fcfcfc')
+
+        for index, row in data.iterrows():
+            row_cells = gap_table.add_row().cells
+            for i, val in enumerate(row):
+                if isinstance(val, float) and val.is_integer():
+                    row_cells[i].text = str(int(val))
+                else:
+                    row_cells[i].text = str(val)
+            if index % 2 == 0:
+                for cell in row_cells:
+                    set_cell_background_color(cell, 'fcfcfc')
+            else:
+                for cell in row_cells:
+                    set_cell_background_color(cell, 'fcfcfc')
+
+            for cell in row_cells:
+                cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+        # remove_margins(doc)
+        # for fig in figs:
+        img_stream = save_chart_to_image(figs)
+        doc.add_picture(img_stream, width=Inches(5.5)) 
+
+        doc.add_page_break()
+    # Save the document
+    doc.save(file_name)
