@@ -2092,7 +2092,7 @@ def main():
                                     traces1.append(go.Bar(
                                         x=combined_df.index,
                                         y=combined_df['NHAI'], 
-                                        name=f'NHAI',
+                                        name=f'NHAI Record',
                                         marker=dict(color='#262240'),
                                         text=combined_df['NHAI'],
                                         textposition='outside',
@@ -2102,7 +2102,7 @@ def main():
                                     traces1.append(go.Bar(
                                         x=combined_df.index,
                                         y=combined_df['AI'],
-                                        name=f'AI',
+                                        name=f'AI Survey',
                                         marker=dict(color='#953fae'),
                                         text=combined_df['AI'],
                                         textposition='outside',
@@ -2197,7 +2197,9 @@ def main():
                             transposed_data1_reset = transposed_data1.reset_index()
                             transposed_data2_reset = transposed_data2.reset_index()
                             gap_analysis_reset = gap_analysis.reset_index()
-                            final_df.columns = ['Nos. of Signages As per NHAI record', 'Nos. of Signages Based on the AI Survey', 'Nos. of Signages Recommended by RSA', 'Gap Based on NHAI record , (-) represents excess signs boards w.r.t NHAI record', 'Gap Based on RSA recommendation']
+                            final_df.columns = ['Nos. of Signages As per NHAI record', 'Nos. of Signages Based on the AI Survey', 'Total signages required including Existing and RSA recommendation (AI + Δ RSA)', 'Gap Based on NHAI record , (-) represents excess signs boards w.r.t NHAI record', 'Gap Based on RSA recommendation']
+                            column_sum_all = final_df.sum()
+                            final_df.loc['Total'] = column_sum_all
                             final_df_reset = final_df.reset_index()
 
                             # Optionally, rename the index column to 'Furniture Assets' or any other desired name
@@ -2267,12 +2269,14 @@ def main():
                             nhai_ai.reset_index(inplace=True)
 
                             nhai_ai_graph = pd.concat([transposed_data1, transposed_data2], axis=1)
+                            nhai_ai_graph.columns = ['NHAI record', 'AI Survey']
                             column_sum_nhai_ai = nhai_ai_graph.sum()
                             nhai_ai_graph.loc['Total'] = column_sum_nhai_ai
                             total_row = nhai_ai_graph.loc['Total']
                             total_row = total_row.astype(int)
 
                             total_graph = pd.concat([transposed_data1, transposed_data2,transposed_data3], axis=1)
+                            total_graph.columns = ['NHAI record', 'AI Survey', 'RSA Recommendations']
                             column_sum_all = total_graph.sum()
                             total_graph.loc['Total'] = column_sum_all
                             total_rows = total_graph.loc['Total']
@@ -2403,7 +2407,7 @@ def main():
                                     traces1.append(go.Bar(
                                         x=combined_df.index,
                                         y=combined_df['NHAI'], 
-                                        name=f'NHAI',
+                                        name=f'NHAI Record',
                                         marker=dict(color='#262240'),
                                         text=combined_df['NHAI'],
                                         textposition='outside',
@@ -2413,7 +2417,7 @@ def main():
                                     traces1.append(go.Bar(
                                         x=combined_df.index,
                                         y=combined_df['AI'],
-                                        name=f'AI',
+                                        name=f'AI Survey',
                                         marker=dict(color='#953fae'),
                                         text=combined_df['AI'],
                                         textposition='outside',
@@ -2505,7 +2509,9 @@ def main():
                             transposed_data1_reset = transposed_data1.reset_index()
                             transposed_data2_reset = transposed_data2.reset_index()
                             gap_analysis_reset = gap_analysis.reset_index()
-                            final_df.columns = ['Nos. of Signages As per NHAI record', 'Nos. of Signages Based on the AI Survey', 'Nos. of Signages Recommended by RSA', 'Gap Based on NHAI record , (-) represents excess signs boards w.r.t NHAI record', 'Gap Based on RSA recommendation']
+                            final_df.columns = ['Nos. of Signages As per NHAI record', 'Nos. of Signages Based on the AI Survey', 'Total signages required including Existing and RSA recommendation (AI + Δ RSA)', 'Gap Based on NHAI record , (-) represents excess signs boards w.r.t NHAI record', 'Gap Based on RSA recommendation']
+                            column_sum_all = final_df.sum()
+                            final_df.loc['Total'] = column_sum_all
                             final_df_reset = final_df.reset_index()
 
                             # Optionally, rename the index column to 'Furniture Assets' or any other desired name
@@ -2513,11 +2519,12 @@ def main():
                             transposed_data2_reset.rename(columns={'index': 'Category of Signages'}, inplace=True)
                             gap_analysis_reset.rename(columns={'index': 'Category of Signages'}, inplace=True)
                             final_df_reset.rename(columns={'index': 'Category of Signages'}, inplace=True)
+                            Gap_study_report  = final_df_reset.copy()
 
 
                             data[Chainage_filter4] = (final_df_reset, fig)
 
-                    create_word_doc_new(moretables,morecharts,data, file_name="Chainage_Wise_Analyzed_Data.docx")
+                    create_word_doc_new(Gap_study_report,moretables,morecharts, data, file_name="Chainage_Wise_Analyzed_Data.docx")
                     st.success('Report generated successfully!')
                     with open("Chainage_Wise_Analyzed_Data.docx", "rb") as file:
                         st.download_button("Chainage_Wise_Analyzed_Data.docx", file, "Chainage_Wise_Analyzed_Data.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
