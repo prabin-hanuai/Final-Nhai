@@ -1975,6 +1975,7 @@ def main():
                     data = {}
                     moretables = {}
                     morecharts = []
+                    three_tables = []
                     for Chainage_filter4 in ["All"] + list(Chainage_values4):
                         
                             
@@ -2251,6 +2252,8 @@ def main():
                             whole_ai.rename(columns={'index': 'Category of Signages'}, inplace=True)
                             moretables['Road Signage Inventory (as provided by NHAI)'] = whole_nhai
                             moretables['Road Signage Inventory based on AI Survey Data (conducted by IIITD)'] = whole_ai
+                            three_tables.append(whole_nhai)
+                            three_tables.append(whole_ai)
 
                             gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
                             gap_analysis['NHAI(Gap Analysis)'] = gap_analysis.sum(axis=1)
@@ -2342,6 +2345,8 @@ def main():
                             # Rename the new index column
                             nhai_ai.rename(columns={'index': 'Category of Signages'}, inplace=True)
                             moretables['Gap study based on NHAI data'] = nhai_ai
+                            three_tables.append(nhai_ai)
+
 
                             #### Graphical Representation
                             figs = []
@@ -2524,7 +2529,7 @@ def main():
 
                             data[Chainage_filter4] = (final_df_reset, fig)
 
-                    create_word_doc_new(Gap_study_report,moretables,morecharts, data, file_name="Chainage_Wise_Analyzed_Data.docx")
+                    create_word_doc_new(three_tables,Gap_study_report,moretables,morecharts, data, file_name="Chainage_Wise_Analyzed_Data.docx")
                     st.success('Report generated successfully!')
                     with open("Chainage_Wise_Analyzed_Data.docx", "rb") as file:
                         st.download_button("Chainage_Wise_Analyzed_Data.docx", file, "Chainage_Wise_Analyzed_Data.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")

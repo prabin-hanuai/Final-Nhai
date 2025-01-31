@@ -133,7 +133,8 @@ def set_cell_background_color(cell, color_hex):
     cell_element.get_or_add_tcPr().append(shading) 
 
 
-def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_name="Chainage_Wise_Analyzed_Data.docx"):
+def create_word_doc_new(three_tables,Gap_study_report,moretables,morecharts ,data_new, file_name="Chainage_Wise_Analyzed_Data.docx"):
+
 
     df1 = pd.DataFrame({
     '1':['saukdghfjs','sakdugdb','sakdhjcdsgcv'],
@@ -236,7 +237,7 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     signed_On = "30-10-2025"
     date_of_commencement = "30-10-2026"
 
-    execSumRun2 = execSumPara.add_run(f'\tThe MoU was signed on <b>{signed_On}</b> and project completion period was kept as twelve (12) months. The date of commencement of this project was {date_of_commencement}.\n\n')
+    execSumRun2 = execSumPara.add_run(f'\tThe MoU was signed on {signed_On} and project completion period was kept as twelve (12) months. The date of commencement of this project was {date_of_commencement}.\t\t\t\n\n')
 
     execSumRun2.font.name = 'Calibri'
     execSumRun2.font.size = Pt(11)
@@ -268,7 +269,7 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     execSumRun34.font.size = Pt(11)
     execSumRun34.bold = True
 
-    execSumRun334data = "and it includes "
+    execSumRun334data = " and it includes "
     execSumRun334 = execSumPara.add_run(execSumRun334data)
 
     execSumRun334.font.name = 'Calibri'
@@ -278,7 +279,7 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     option = "Flexible/Rigid"
     blank ="value"
     stageofProject = "DLP/O&M"
-    execSumRun35 = execSumPara.add_run(f'“{sixLaneLine}” configuration and the type of pavement is {option}. The construction work of the project was completed on/ date of COD was {blank} . The project is currently under {stageofProject} stage.')
+    execSumRun35 = execSumPara.add_run(f'“{sixLaneLine}” configuration and the type of pavement is {option}. The construction work of the project was completed on/ date of COD was {blank} . The project is currently under {stageofProject} stage.\t\t\t\n\n')
 
     execSumRun35.font.name = 'Calibri'
     execSumRun35.font.size = Pt(11)
@@ -289,7 +290,7 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     no_of_roads_nhai = "242"
     gap_sign_boards = "-61"
     gap_signages = "-61"
-    execSumRun4 = execSumPara.add_run(f'\tThe survey on this project stretch was carried out on {date} by the team of IIIT Delhi. As per survey findings which is based on Artificial Intelligence (AI), there are {no_of_roads} nos. of roads signs including Chevron, Hazard, Cautionary Warning, Prohibitory Mandatory & Informatory Signs, on this project. However, as per NHAI record/ approved Road Signage Plan of Contract Agreement, the number of road signages on this project are {no_of_roads_nhai} nos. (data as provided by NHAI). Therefore, a gap of {gap_sign_boards} nos. sign boards have been observed vis-à-vis NHAI record. This variance in the count of signages in the contract document and existing signages taken out by AI survey report is not available in NHAI record. This finding will help NHAI in better inventorisation of the existing Road Signage on this project.  \n\n')
+    execSumRun4 = execSumPara.add_run(f'\tThe survey on this project stretch was carried out on {date} by the team of IIIT Delhi. As per survey findings which is based on Artificial Intelligence (AI), there are {no_of_roads} nos. of roads signs including Chevron, Hazard, Cautionary Warning, Prohibitory Mandatory & Informatory Signs, on this project. However, as per NHAI record/ approved Road Signage Plan of Contract Agreement, the number of road signages on this project are {no_of_roads_nhai} nos. (data as provided by NHAI). Therefore, a gap of {gap_sign_boards} nos. sign boards have been observed vis-à-vis NHAI record. This variance in the count of signages in the contract document and existing signages taken out by AI survey report is not available in NHAI record. This finding will help NHAI in better inventorisation of the existing Road Signage on this project.  \t\t\t\n\n')
 
     execSumRun4.font.name = 'Calibri'
     execSumRun4.font.size = Pt(11)
@@ -299,7 +300,7 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     road_signs_rsa_gap = "79"
 
 
-    execSumRun5 = execSumPara.add_run('\tSecondly, this project has also carried out gap study based on the recommendation of certified road safety auditor (RSA). As per RSA recommendation, the number of Total road signs required on this project are {road_signs_required} nos. Accordingly, there is an additional requirement of {road_signs_rsa_gap} of signages over and above {road_signs_rsa} nos. as observed during the survey. \n\n')
+    execSumRun5 = execSumPara.add_run('\tSecondly, this project has also carried out gap study based on the recommendation of certified road safety auditor (RSA). As per RSA recommendation, the number of Total road signs required on this project are {road_signs_required} nos. Accordingly, there is an additional requirement of {road_signs_rsa_gap} of signages over and above {road_signs_rsa} nos. as observed during the survey. \t\t\t\n\n')
 
     execSumRun5.font.name = 'Calibri'
     execSumRun5.font.size = Pt(11)
@@ -364,6 +365,7 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     IntroSubHead1para1run1.font.size = Pt(11)
 
     IntroSubHead1para2 = doc.add_paragraph()
+    IntroSubHead1para2.alignment = 3
     IntroSubHead1para2run1 = IntroSubHead1para2.add_run('\tThe project duration as per the MoU is twelve (12) months and the date of commencement of work is 27.09.2024.  The tentative length of roads to be covered under the aforementioned study shall be 25,000 km. The list of stretches included in the project are from different states which is divided into 05 zones (Zone A to E).\t\t\t\t')
 
     IntroSubHead1para2run1.font.name = 'Calibri'
@@ -464,26 +466,26 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     IntroSubHead3Para1.alignment = 3
 
 
-    IntroSubHead3Para1Run1 = IntroSubHead3Para1.add_run('The scope of work is to carry out Gap studies w.r.t the availability and broad condition of road signs on around 25,000 km of National Highways in India.  The services includes following: \t\t\t\t\n')
+    IntroSubHead3Para1Run1 = IntroSubHead3Para1.add_run('\tThe scope of work is to carry out Gap studies w.r.t the availability and broad condition of road signs on around 25,000 km of National Highways in India.  The services includes following: \t\t\t\t\n')
     IntroSubHead3Para1Run1.font.name = 'Calibri'
     IntroSubHead3Para1Run1.font.size = Pt(11)
 
 
-    IntroSubHead3Para1Run2 = IntroSubHead3Para1.add_run('i. The gap study shall be carried out by assessing the difference between the survey findings and the requirements of road signs as per signage plan of the respective Contract Agreement. \n\n')
+    IntroSubHead3Para1Run2 = IntroSubHead3Para1.add_run('i. The gap study shall be carried out by assessing the difference between the survey findings and the requirements of road signs as per signage plan of the respective Contract Agreement. \t\t\t\t\n\n')
     IntroSubHead3Para1Run2.font.name = 'Calibri'
     IntroSubHead3Para1Run2.font.size = Pt(11)
 
     doc.add_page_break()
 
-    IntroSubHead3Para1Run3 = IntroSubHead3Para1.add_run('ii. Gap study based on updated / latest Codal provisions relevant to high-speed corridors to cater for enhanced safety requirements. For this purpose, IIITD shall engage a certified Road Safety Auditor (RSA) for assisting in the gap study and preparation of report.  \n\n')
+    IntroSubHead3Para1Run3 = IntroSubHead3Para1.add_run('ii. Gap study based on updated / latest Codal provisions relevant to high-speed corridors to cater for enhanced safety requirements. For this purpose, IIITD shall engage a certified Road Safety Auditor (RSA) for assisting in the gap study and preparation of report.  \t\t\t\t\n\n')
     IntroSubHead3Para1Run3.font.name = 'Calibri'
     IntroSubHead3Para1Run3.font.size = Pt(11)
 
-    IntroSubHead3Para1Run4 = IntroSubHead3Para1.add_run('iii. IIITD shall carry out the surveys for collecting imagery and other ancillary data related to availability and condition of road signages on selected National Highways stretches in India as provided by NHAI.  \n\n')
+    IntroSubHead3Para1Run4 = IntroSubHead3Para1.add_run('iii. IIITD shall carry out the surveys for collecting imagery and other ancillary data related to availability and condition of road signages on selected National Highways stretches in India as provided by NHAI.  \t\t\t\t\n\n')
     IntroSubHead3Para1Run4.font.name = 'Calibri'
     IntroSubHead3Para1Run4.font.size = Pt(11)
 
-    IntroSubHead3Para1Run5 = IntroSubHead3Para1.add_run('iv. The data collected through surveys shall be processed through deployment of adequately capable Artificial Intelligence (AI) for accurate identification and classification of road sign types.  \n\n')
+    IntroSubHead3Para1Run5 = IntroSubHead3Para1.add_run('iv. The data collected through surveys shall be processed through deployment of adequately capable Artificial Intelligence (AI) for accurate identification and classification of road sign types.  \t\t\t\t\n\n')
     IntroSubHead3Para1Run5.font.name = 'Calibri'
     IntroSubHead3Para1Run5.font.size = Pt(11)
 
@@ -572,7 +574,7 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
 
 
     index_map_data = doc.add_paragraph()
-    mapRun1 = index_map_data.add_run('\n\niii. Index map:\n')
+    mapRun1 = index_map_data.add_run('\n\niii. Index map:\n\n')
     mapRun1.font.name = 'Calibri'
     mapRun1.font.size = Pt(12)
     mapRun1.bold = True
@@ -641,7 +643,14 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     doc.add_page_break()
 
     ### 2. Methodology ################################################################################################################
-    
+    invHead1 =doc.add_heading('2. Methodology', level=1)
+
+    # Modify heading properties
+    runInvHead = invHead1.runs[0]
+    runInvHead.font.name = 'Calibri'
+    runInvHead.font.size = Pt(16)
+    runInvHead.bold = False 
+
     mSubHead1 = doc.add_heading('2.1.	Data Collection ', level=2)
 
     mSubHead1Run = mSubHead1.runs[0]
@@ -652,7 +661,7 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     mSubHead1Para1 = doc.add_paragraph()
     mSubHead1Para1Run1 = mSubHead1Para1.add_run('The research methodology used is a combination of data collection and processing the same through Artificial Intelligence (AI) based solutions. The data collection involves the use of technology like integrated device which is mounted on the vehicle and the survey is done with expert and driver in the vehicle. The start point is marked and the Main Carriageway (MCW) is covered on both LHS & RHS. The survey further includes covering all the service roads and intersections of the same stretch on vehicles to collect data remotely. The data which is collected is uploaded for the further processing through AI models. \n\n')
 
-    mSubHead1Para1Run1.font.name = 'Verdana'
+    mSubHead1Para1Run1.font.name = 'Calibri'
     mSubHead1Para1Run1.font.size = Pt(11)
 
     mSubHead2 = doc.add_heading('2.2.	Broad Methodology- Artificial Intelligence based solution ', level=2)
@@ -665,7 +674,7 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     mSubHead2Para1 = doc.add_paragraph()
     mSubHead2Para1Run1 = mSubHead2Para1.add_run('AI models are employed to process the collected data, identify patterns, and generate insights into road signages as seen in the video captured. The chainage, name of the road, latitude & longitude are marked simultaneously.  \n\n')
 
-    mSubHead2Para1Run1.font.name = 'Verdana'
+    mSubHead2Para1Run1.font.name = 'Calibri'
     mSubHead2Para1Run1.font.size = Pt(11)
 
     doc.add_page_break()
@@ -687,20 +696,88 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     invSubHead1Run.font.size = Pt(13)
     invSubHead1Run.bold = False  # Make it bold
 
+    invHead1Para1 = doc.add_paragraph()
+    invHead1Para1Run1 = invHead1Para1.add_run('\tThe inventory of road signs as provided by NHAI with broad categorisation is presented in the table below. The detailed inventory is placed at Annexure A.  \t\t\t')
 
-    invSubHead2 = doc.add_heading('3.2.Road Signage Inventory based on Survey Data (conducted by IIIT)', level=2)
+    invHead1Para1Run1.font.name = 'Calibri'
+    invHead1Para1Run1.font.size = Pt(11)
+    nhai_table  = three_tables[0]
+    nhai_table_word = doc.add_table(rows=1, cols=len(nhai_table.columns))
+
+    hdr_cells = nhai_table_word.rows[0].cells
+    for i, col in enumerate(nhai_table.columns):
+        hdr_cells[i].text = col
+        hdr_cells[i].paragraphs[0].runs[0].bold = True
+        set_cell_background_color(hdr_cells[i], 'fcfcfc')
+
+    for index, row in nhai_table.iterrows():
+        row_cells = nhai_table_word.add_row().cells
+        for i, val in enumerate(row):
+            if isinstance(val, float) and val.is_integer():
+                row_cells[i].text = str(int(val))
+            else:
+                row_cells[i].text = str(val)
+        if index % 2 == 0:
+            for cell in row_cells:
+                set_cell_background_color(cell, 'fcfcfc')
+        else:
+            for cell in row_cells:
+                set_cell_background_color(cell, 'fcfcfc')
+
+        for cell in row_cells:
+            cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+
+    invSubHead2 = doc.add_heading('\n\n3.2.Road Signage Inventory based on Survey Data (conducted by IIIT)', level=2)
 
     invSubHead2Run = invSubHead2.runs[0]
     invSubHead2Run.font.name = 'Calibri'
     invSubHead2Run.font.size = Pt(13)
     invSubHead2Run.bold = False  # Make it bold
+    invHead2Para1 = doc.add_paragraph()
+    invHead2Para1Run1 = invHead2Para1.add_run('\tThe inventory of road signs based on AI Survey Data with broad categorisation is presented in the table below. The detailed inventory is placed at Annexure B.  \t\t\t')
 
-    invSubHead3 = doc.add_heading('3.3.Road signage Requirement as per Road Safety Audit', level=2)
+    invHead2Para1Run1.font.name = 'Calibri'
+    invHead2Para1Run1.font.size = Pt(11)
+    ai_table  = three_tables[1]
+    ai_table_word = doc.add_table(rows=1, cols=len(ai_table.columns))
+
+    hdr_cells = ai_table_word.rows[0].cells
+    for i, col in enumerate(ai_table.columns):
+        hdr_cells[i].text = col
+        hdr_cells[i].paragraphs[0].runs[0].bold = True
+        set_cell_background_color(hdr_cells[i], 'fcfcfc')
+
+    for index, row in ai_table.iterrows():
+        row_cells = ai_table_word.add_row().cells
+        for i, val in enumerate(row):
+            if isinstance(val, float) and val.is_integer():
+                row_cells[i].text = str(int(val))
+            else:
+                row_cells[i].text = str(val)
+        if index % 2 == 0:
+            for cell in row_cells:
+                set_cell_background_color(cell, 'fcfcfc')
+        else:
+            for cell in row_cells:
+                set_cell_background_color(cell, 'fcfcfc')
+
+        for cell in row_cells:
+            cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+    invSubHead3 = doc.add_heading('\n\n3.3.Road signage Requirement as per Road Safety Audit', level=2)
 
     invSubHead3Run = invSubHead3.runs[0]
     invSubHead3Run.font.name = 'Calibri'
     invSubHead3Run.font.size = Pt(13)
     invSubHead3Run.bold = False  # Make it bold
+
+    invHead3Para1 = doc.add_paragraph()
+    invHead3Para1Run1 = invHead3Para1.add_run('\tThe inventory of road signs as per Road Safety Auditor recommendation is presented in the table below. The detailed inventory is placed at Annexure C.   \t\t\t\n\n')
+
+    invHead3Para1Run1.font.name = 'Calibri'
+    invHead3Para1Run1.font.size = Pt(11)
+    
 
     doc.add_page_break()
 
@@ -720,6 +797,48 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     gapSubHead1Run.font.size = Pt(13)
     gapSubHead1Run.bold = False  # Make it bold
 
+    gapsub1Para1 = doc.add_paragraph()
+    gapsub1Para1Run1 = gapsub1Para1.add_run('\tFollowing table represents the gap analysis of road signs between NHAI record and AI survey data-   \t\t\t')
+
+    gapsub1Para1Run1.font.name = 'Calibri'
+    gapsub1Para1Run1.font.size = Pt(11)
+
+    nhai_ai_table  = three_tables[2]
+    nhai_ai_table_word = doc.add_table(rows=1, cols=len(nhai_ai_table.columns))
+
+    hdr_cells = nhai_ai_table_word.rows[0].cells
+    for i, col in enumerate(nhai_ai_table.columns):
+        hdr_cells[i].text = col
+        hdr_cells[i].paragraphs[0].runs[0].bold = True
+        set_cell_background_color(hdr_cells[i], 'fcfcfc')
+
+    for index, row in nhai_ai_table.iterrows():
+        row_cells = nhai_ai_table_word.add_row().cells
+        for i, val in enumerate(row):
+            if isinstance(val, float) and val.is_integer():
+                row_cells[i].text = str(int(val))
+            else:
+                row_cells[i].text = str(val)
+        if index % 2 == 0:
+            for cell in row_cells:
+                set_cell_background_color(cell, 'fcfcfc')
+        else:
+            for cell in row_cells:
+                set_cell_background_color(cell, 'fcfcfc')
+
+        for cell in row_cells:
+            cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+    gapsub1Para2 = doc.add_paragraph()
+    gapsub1Para1Run2 = gapsub1Para2.add_run('\tFollowing graph shows the difference between NHAI record and AI based survey in a bar chart-   \t\t\t')
+
+    gapsub1Para1Run2.font.name = 'Calibri'
+    gapsub1Para1Run2.font.size = Pt(11)
+
+    nhai_ai_table_graph = morecharts[0]
+    img_stream = save_chart_to_image(nhai_ai_table_graph)
+    doc.add_picture(img_stream, width=Inches(5.5))
+
 
     gapSubHead2 = doc.add_heading('4.2.Gap study based on Rad safety audit', level=2)
 
@@ -728,12 +847,53 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     gapsubHead2Run.font.size = Pt(13)
     gapsubHead2Run.bold = False  # Make it bold
 
+    gapsub2Para1 = doc.add_paragraph()
+    gapsub2Para1Run1 = gapsub2Para1.add_run('\tFollowing table represents the gap analysis of road signs between NHAI record , AI survey data and Road safety auditor recommendation with different category of signage. The detailed inventory is placed at Annexure D.   \t\t\t\n\n')
+
+    gapsub2Para1Run1.font.name = 'Calibri'
+    gapsub2Para1Run1.font.size = Pt(11)
+
+    gap_table = doc.add_table(rows=1, cols=len(Gap_study_report.columns))
+
+    hdr_cells = gap_table.rows[0].cells
+    for i, col in enumerate(Gap_study_report.columns):
+        hdr_cells[i].text = col
+        hdr_cells[i].paragraphs[0].runs[0].bold = True
+        set_cell_background_color(hdr_cells[i], 'fcfcfc')
+
+    for index, row in Gap_study_report.iterrows():
+        row_cells = gap_table.add_row().cells
+        for i, val in enumerate(row):
+            if isinstance(val, float) and val.is_integer():
+                row_cells[i].text = str(int(val))
+            else:
+                row_cells[i].text = str(val)
+        if index % 2 == 0:
+            for cell in row_cells:
+                set_cell_background_color(cell, 'fcfcfc')
+        else:
+            for cell in row_cells:
+                set_cell_background_color(cell, 'fcfcfc')
+
+        for cell in row_cells:
+            cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+
+    gapsub2Para2 = doc.add_paragraph()
+    gapsub2Para1Run2 = gapsub2Para2.add_run('\tFollowing graph shows the difference between NHAI record , AI based survey and Road safety auditor recommendation in a bar chart  format,lk-   \t\t\t\n\n')
+
+    gapsub2Para1Run2.font.name = 'Calibri'
+    gapsub2Para1Run2.font.size = Pt(11)
+
+    gap_table_graph = morecharts[1]
+    img_stream = save_chart_to_image(gap_table_graph)
+    doc.add_picture(img_stream, width=Inches(5.5))
+
     doc.add_page_break()
 
     ############################################################################################################
     print('more tables',moretables)
     for key,data in moretables.items():
-        doc.add_heading(key, level=2)
+        doc.add_paragraph(key)
         gap_table = doc.add_table(rows=1, cols=len(data.columns))
 
         hdr_cells = gap_table.rows[0].cells
@@ -770,7 +930,7 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
     doc.add_heading('Chainage Wise Gap Analysis', 0)
 
     for chainage, (data, figs) in data_new.items():
-        doc.add_heading(f"Chainage: {chainage}", level=1)
+        doc.add_paragraph(f"Chainage: {chainage}")
         
         # # **Table 1: PIU Data**
         # doc.add_heading("PIU Data:", level=2)
@@ -821,7 +981,7 @@ def create_word_doc_new(Gap_study_report,moretables,morecharts ,data_new, file_n
         #         cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
 
         # **Gap Analysis Table**
-        doc.add_heading("Gap Analysis:", level=2)
+        doc.add_paragraph("Gap Analysis:")
         gap_table = doc.add_table(rows=1, cols=len(data.columns))
 
         hdr_cells = gap_table.rows[0].cells
