@@ -36,12 +36,23 @@ def RA_preprocess(temp):
     
     final_data = pd.DataFrame(Furniture_Chainage_Report)
     na_data = final_data[final_data['Road Section'].isna()]
-    total_sum = na_data.select_dtypes(include='number').sum().sum()
+    na_data = na_data.drop(columns = ['Road Section','Chainage'])
+    na_data = na_data.astype('str')
+    na_data = na_data.replace('NIL',pd.NA)
+    na_data = na_data.replace('nan',pd.NA)
+    na_data = na_data.replace('NONE',pd.NA)
+
+    total_sum = na_data.fillna('0')
+    rows_with_data = na_data[na_data.ne('0').any(axis=1)]
+    rows_with_data_indices = rows_with_data.index.tolist()
+    total_sum = na_data.sum().sum()
     if total_sum != 0:
-        st.write('Data is not in the correct format, check row with missing Road Section')
+        st.write('Data is not in the correct format, check row with missing Road Section, their sum is ',total_sum)
+        st.write('Rows with data present (non-zero) are at indices:', rows_with_data_indices)
 
     final_data.dropna(subset=['Road Section'], inplace=True)
     final_data.replace('NONE', pd.NA, inplace=True)
+    final_data.replace('NIL', pd.NA, inplace=True)
     final_data.fillna(0,inplace = True)
     while overhead:
         _  = overhead.pop()

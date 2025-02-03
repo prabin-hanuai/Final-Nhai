@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import streamlit as st
 
 def convert_to_meters(distance):
     if '.+' in distance:
@@ -24,6 +25,8 @@ def rsa_preprocess(excel_path, range_tuples):
     for sheet in sheets:
         df = pd.read_excel(excel_path, sheet_name=sheet, header=[9], usecols="A:J")
         df.columns = [i.lower().strip() for i in df.columns]
+        st.write(f"{sheet}")
+        st.dataframe(df, use_container_width=True)
 
         print(sheet,df.shape)
         df.dropna(subset=['chainage'],inplace=True)
@@ -40,6 +43,7 @@ def rsa_preprocess(excel_path, range_tuples):
         final_df.dropna(subset=['chainage'],inplace=True)
         
         final_df['chainage'] = final_df['chainage'].apply(convert_to_meters)
+        
 
 
         def get_range(chainage):
@@ -52,6 +56,7 @@ def rsa_preprocess(excel_path, range_tuples):
         
         grouped = final_df.groupby(['Chainage', 'type of sign board', location_col]).size().reset_index(name='count')
         grouped['Road Section'] = sheet
+        st.dataframe(grouped, use_container_width=True)
         all_data.append(grouped)
     
     # Combine all DataFrames into one
