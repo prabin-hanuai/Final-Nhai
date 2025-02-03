@@ -50,10 +50,12 @@ def rsa_preprocess(excel_path, range_tuples):
             for start, end in range_tuples:
                 if start <= chainage <= end:
                     return f"{start}-{end}"
+                elif end <= chainage <= start:
+                    return f"{end}-{start}"
             return None
         
         final_df['Chainage'] = final_df['chainage'].apply(get_range)
-        
+        st.dataframe(final_df, use_container_width=True)
         grouped = final_df.groupby(['Chainage', 'type of sign board', location_col]).size().reset_index(name='count')
         grouped['Road Section'] = sheet
         st.dataframe(grouped, use_container_width=True)
