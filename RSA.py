@@ -130,7 +130,7 @@ def rsa_process(excel_path, range):
     for new_col, old_cols in columns_map.items():
         for col in old_cols:
             if col not in pivot_df.columns:
-                pivot_df[old_cols] = np.nan
+                pivot_df[col] = np.nan
         pivot_df_new[new_col] = pivot_df[old_cols].sum(axis=1)
 
     return pivot_df, pivot_df_new

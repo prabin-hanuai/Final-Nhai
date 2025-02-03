@@ -26,8 +26,8 @@ def save_chart_to_image(fig):
     img_bytes = fig.to_image(format="png")  # format can be 'png', 'jpeg', 'svg', etc.
     img_stream.write(img_bytes)
     img_stream.seek(0)  # Go back to the beginning of the BytesIO stream
-    with open("chart.png", "wb") as f:
-        f.write(img_stream.read())
+    # with open("chart.png", "wb") as f:
+    #     f.write(img_stream.read())
     return img_stream
 
 def create_word_doc(data, file_name="Chainage_Wise_Analyzed_Data.docx"):
@@ -1013,5 +1013,11 @@ def create_word_doc_new(three_tables,Gap_study_report,moretables,morecharts ,dat
         doc.add_picture(img_stream, width=Inches(5.5)) 
 
         doc.add_page_break()
+
+    doc_stream = io.BytesIO()
+    doc.save(doc_stream)
+    doc_stream.seek(0)
+
     # Save the document
-    doc.save(file_name)
+    # doc.save(file_name)
+    return doc_stream

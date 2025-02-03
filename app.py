@@ -7,1330 +7,1332 @@ import plotly.graph_objects as go
 import shutil
 import plotly.express as px
 def main():
-    activities = ["Home", "New Template", "Devloper"]
+    activities = ["Home", "Old Template", "Devloper"]
     choice = st.sidebar.selectbox("Menu", activities)
-    if choice == 'Home':
-        # Set up the title of the app
-        st.title("Furniture Chainage Report")
 
-        st.header("Upload PIU Excel File")
-        type_a_file = st.file_uploader("Upload PIU Excel file", type=["xlsx", "xls"])
+    # if choice == 'Old Template':
+    #     # Set up the title of the app
+    #     st.title("Furniture Chainage Report")
 
-        if type_a_file is not None:
-            try:
-                type_a_df = pd.read_excel(type_a_file, header=[0, 1, 2, 3, 4])
-                st.write("Data from PIU Excel file:")
-                final_data1,final_data1_new = RA_preprocess(type_a_df)
+    #     st.header("Upload PIU Excel File")
+    #     type_a_file = st.file_uploader("Upload PIU Excel file", type=["xlsx", "xls"])
 
-                if 'Chainage' in final_data1.columns:
-                    final_data1['Processed_Chainage'] = final_data1['Chainage'].apply(preprocess_chainage)
-                    Chainage_values1 = final_data1['Processed_Chainage'].unique() 
+    #     if type_a_file is not None:
+    #         try:
+    #             type_a_df = pd.read_excel(type_a_file, header=[0, 1, 2, 3, 4])
+    #             st.write("Data from PIU Excel file:")
+    #             final_data1,final_data1_new = RA_preprocess(type_a_df)
 
-                    Chainage_filter1 = st.selectbox("Select Chainage value to filter", ["All"] + list(Chainage_values1), key="chainage_filter1")
+    #             if 'Chainage' in final_data1.columns:
+    #                 final_data1['Processed_Chainage'] = final_data1['Chainage'].apply(preprocess_chainage)
+    #                 Chainage_values1 = final_data1['Processed_Chainage'].unique() 
+
+    #                 Chainage_filter1 = st.selectbox("Select Chainage value to filter", ["All"] + list(Chainage_values1), key="chainage_filter1")
                     
-                    if Chainage_filter1 != "All":
-                        filtered_data1 = final_data1[final_data1['Processed_Chainage'] == Chainage_filter1]
-                        filtered_data1 = filtered_data1.drop(columns=['Processed_Chainage'])
-                        st.write(f"Filtered data for Chainage = {Chainage_filter1}:")
-                        st.dataframe(filtered_data1, use_container_width=True)
-                    else:
-                        final_data1 = final_data1.drop(columns=['Processed_Chainage'])
-                        st.write("Displaying whole data:")
-                        st.dataframe(final_data1, use_container_width=True)
+    #                 if Chainage_filter1 != "All":
+    #                     filtered_data1 = final_data1[final_data1['Processed_Chainage'] == Chainage_filter1]
+    #                     filtered_data1 = filtered_data1.drop(columns=['Processed_Chainage'])
+    #                     st.write(f"Filtered data for Chainage = {Chainage_filter1}:")
+    #                     st.dataframe(filtered_data1, use_container_width=True)
+    #                 else:
+    #                     final_data1 = final_data1.drop(columns=['Processed_Chainage'])
+    #                     st.write("Displaying whole data:")
+    #                     st.dataframe(final_data1, use_container_width=True)
 
-            except Exception as e:
-                st.error(f"Error reading PIU Excel file: {e}")
+    #         except Exception as e:
+    #             st.error(f"Error reading PIU Excel file: {e}")
 
-        elif type_a_file is None:
-            st.warning("Please upload a PIU Excel file.")
+    #     elif type_a_file is None:
+    #         st.warning("Please upload a PIU Excel file.")
 
-        st.header("Upload RA Excel File")
-        type_b_file = st.file_uploader("Upload RA Excel file", type=["xlsx", "xls"])
+    #     st.header("Upload RA Excel File")
+    #     type_b_file = st.file_uploader("Upload RA Excel file", type=["xlsx", "xls"])
 
-        if type_b_file is not None:
-            try:
-                type_b_df = pd.read_excel(type_b_file, header=[0, 1, 2, 3, 4])
-                st.write("Data from Type RA Excel file:")
-                final_data2,final_data2_new = RA_preprocess(type_b_df)
+    #     if type_b_file is not None:
+    #         try:
+    #             type_b_df = pd.read_excel(type_b_file, header=[0, 1, 2, 3, 4])
+    #             st.write("Data from Type RA Excel file:")
+    #             final_data2,final_data2_new = RA_preprocess(type_b_df)
 
-                if 'Chainage' in final_data1.columns:
-                    final_data2['Processed_Chainage'] = final_data2['Chainage'].apply(preprocess_chainage)
-                    Chainage_values2 = final_data2['Processed_Chainage'].unique() 
+    #             if 'Chainage' in final_data1.columns:
+    #                 final_data2['Processed_Chainage'] = final_data2['Chainage'].apply(preprocess_chainage)
+    #                 Chainage_values2 = final_data2['Processed_Chainage'].unique() 
 
-                    Chainage_filter2 = st.selectbox("Select Chainage value to filter", ["All"] + list(Chainage_values2), key="chainage_filter2")
+    #                 Chainage_filter2 = st.selectbox("Select Chainage value to filter", ["All"] + list(Chainage_values2), key="chainage_filter2")
                     
-                    if Chainage_filter2 != "All":
-                        filtered_data2 = final_data2[final_data2['Processed_Chainage'] == Chainage_filter2]
-                        filtered_data2 = filtered_data2.drop(columns=['Processed_Chainage'])
-                        st.write(f"Filtered data for Chainage = {Chainage_filter2}:")
-                        st.dataframe(filtered_data2, use_container_width=True)
-                    else:
-                        final_data2 = final_data2.drop(columns=['Processed_Chainage'])
-                        st.write("Displaying whole data:")
-                        st.dataframe(final_data1, use_container_width=True)
-                else:
-                    st.warning("The 'Chainage' column is not present in the RA Excel data.")
+    #                 if Chainage_filter2 != "All":
+    #                     filtered_data2 = final_data2[final_data2['Processed_Chainage'] == Chainage_filter2]
+    #                     filtered_data2 = filtered_data2.drop(columns=['Processed_Chainage'])
+    #                     st.write(f"Filtered data for Chainage = {Chainage_filter2}:")
+    #                     st.dataframe(filtered_data2, use_container_width=True)
+    #                 else:
+    #                     final_data2 = final_data2.drop(columns=['Processed_Chainage'])
+    #                     st.write("Displaying whole data:")
+    #                     st.dataframe(final_data1, use_container_width=True)
+    #             else:
+    #                 st.warning("The 'Chainage' column is not present in the RA Excel data.")
 
-            except Exception as e:
-                st.error(f"Error reading RA Excel file: {e}")
+    #         except Exception as e:
+    #             st.error(f"Error reading RA Excel file: {e}")
 
-        elif type_b_file is None:
-            st.warning("Please upload a RA Excel file.")
+    #     elif type_b_file is None:
+    #         st.warning("Please upload a RA Excel file.")
 
-        st.header("Upload RSA Excel File")
-        type_r_file = st.file_uploader("Upload RSA Excel file", type=["xlsx", "xls"])
+    #     st.header("Upload RSA Excel File")
+    #     type_r_file = st.file_uploader("Upload RSA Excel file", type=["xlsx", "xls"])
 
-        if type_r_file is not None and type_a_file is not None:
-            with open('temp.xlsx', 'wb') as f:
-                    # Write the uploaded file content to 'temp.xlsx'
-                    shutil.copyfileobj(type_r_file, f)
-            try:
-                range_tuples = [(int(start.strip()), int(end.strip())) for r in Chainage_values1 for start, end in [r.split('-')]]
-                rsa_df,rsa_df_new = rsa_process('temp.xlsx',range_tuples)
-                st.write("Data from RSA Excel file:")
+    #     if type_r_file is not None and type_a_file is not None:
+    #         with open('temp.xlsx', 'wb') as f:
+    #                 # Write the uploaded file content to 'temp.xlsx'
+    #                 shutil.copyfileobj(type_r_file, f)
+    #         try:
+    #             range_tuples = [(int(start.strip()), int(end.strip())) for r in Chainage_values1 for start, end in [r.split('-')]]
+    #             rsa_df,rsa_df_new = rsa_process('temp.xlsx',range_tuples)
+    #             st.write("Data from RSA Excel file:")
 
 
-                if 'Chainage' in rsa_df.columns:
-                    print('insode if')
+    #             if 'Chainage' in rsa_df.columns:
+    #                 print('insode if')
 
-                    rsa_df['Processed_Chainage'] = rsa_df['Chainage'].apply(preprocess_chainage)
-                    Chainage_values_rsa = rsa_df['Processed_Chainage'].unique() 
+    #                 rsa_df['Processed_Chainage'] = rsa_df['Chainage'].apply(preprocess_chainage)
+    #                 Chainage_values_rsa = rsa_df['Processed_Chainage'].unique() 
 
-                    Chainage_filter_rsa = st.selectbox("Select Chainage value to filter", ["All"] + list(Chainage_values_rsa), key="Chainage_filter_rsa")
+    #                 Chainage_filter_rsa = st.selectbox("Select Chainage value to filter", ["All"] + list(Chainage_values_rsa), key="Chainage_filter_rsa")
                     
-                    if Chainage_filter_rsa != "All":
-                        filtered_rsa = rsa_df[rsa_df['Processed_Chainage'] == Chainage_filter_rsa]
-                        filtered_rsa = filtered_rsa.drop(columns=['Processed_Chainage'])
-                        st.write(f"Filtered data for Chainage = {Chainage_filter_rsa}:")
-                        st.dataframe(filtered_rsa, use_container_width=True)
-                    else:
-                        rsa_df = rsa_df.drop(columns=['Processed_Chainage'])
-                        st.write("Displaying whole data:")
-                        st.dataframe(rsa_df, use_container_width=True)
+    #                 if Chainage_filter_rsa != "All":
+    #                     filtered_rsa = rsa_df[rsa_df['Processed_Chainage'] == Chainage_filter_rsa]
+    #                     filtered_rsa = filtered_rsa.drop(columns=['Processed_Chainage'])
+    #                     st.write(f"Filtered data for Chainage = {Chainage_filter_rsa}:")
+    #                     st.dataframe(filtered_rsa, use_container_width=True)
+    #                 else:
+    #                     rsa_df = rsa_df.drop(columns=['Processed_Chainage'])
+    #                     st.write("Displaying whole data:")
+    #                     st.dataframe(rsa_df, use_container_width=True)
 
-            except Exception as e:
-                st.error(f"Error reading RSA Excel file: {e}")
+    #         except Exception as e:
+    #             st.error(f"Error reading RSA Excel file: {e}")
 
-        elif type_r_file is None:
-            st.warning("Please upload a RSA Excel file.")
+    #     elif type_r_file is None:
+    #         st.warning("Please upload a RSA Excel file.")
 
-        if type_a_file is not None and type_b_file is not None:
-            st.header("Analyzed Data(Avenue & Median):")
-            final_data1['Processed_Chainage'] = final_data1['Chainage'].apply(preprocess_chainage)
-            final_data2['Processed_Chainage'] = final_data2['Chainage'].apply(preprocess_chainage)
-            rsa_df['Processed_Chainage'] = rsa_df['Chainage'].apply(preprocess_chainage)
+    #     if type_a_file is not None and type_b_file is not None:
+    #         st.header("Analyzed Data(Avenue & Median):")
+    #         final_data1['Processed_Chainage'] = final_data1['Chainage'].apply(preprocess_chainage)
+    #         final_data2['Processed_Chainage'] = final_data2['Chainage'].apply(preprocess_chainage)
+    #         rsa_df['Processed_Chainage'] = rsa_df['Chainage'].apply(preprocess_chainage)
             
-            Chainage_values3 = final_data1['Processed_Chainage'].unique() 
-            Chainage_filter3 = st.selectbox("Select Chainage value to filter",["All"] + list(Chainage_values3), key="chainage_filter3")
+    #         Chainage_values3 = final_data1['Processed_Chainage'].unique() 
+    #         Chainage_filter3 = st.selectbox("Select Chainage value to filter",["All"] + list(Chainage_values3), key="chainage_filter3")
 
-            if Chainage_filter3 != "All":
-                filtered_data1 = final_data1[final_data1['Processed_Chainage'] == Chainage_filter3]
-                filtered_data2 = final_data2[final_data2['Processed_Chainage'] == Chainage_filter3]
-                filtered_rsa_df = rsa_df[rsa_df['Processed_Chainage'] == Chainage_filter3]
-
-
-                data1 = filtered_data1.copy()
-                data2 = filtered_data2.copy()
-                rsa_data = filtered_rsa_df.copy()
-
-                data1 = data1.drop(columns=['Processed_Chainage','Road Section'])
-                data2 = data2.drop(columns=['Processed_Chainage','Road Section'])
-                rsa_data = rsa_data.drop(columns=['Processed_Chainage','Road Section'])
+    #         if Chainage_filter3 != "All":
+    #             filtered_data1 = final_data1[final_data1['Processed_Chainage'] == Chainage_filter3]
+    #             filtered_data2 = final_data2[final_data2['Processed_Chainage'] == Chainage_filter3]
+    #             filtered_rsa_df = rsa_df[rsa_df['Processed_Chainage'] == Chainage_filter3]
 
 
+    #             data1 = filtered_data1.copy()
+    #             data2 = filtered_data2.copy()
+    #             rsa_data = filtered_rsa_df.copy()
 
-                # # Display the filtered data
-                # st.write(f"Filtered Data from File 1 for Chainage = {Chainage_filter3}:")
-                # st.dataframe(data1, use_container_width=True)
+    #             data1 = data1.drop(columns=['Processed_Chainage','Road Section'])
+    #             data2 = data2.drop(columns=['Processed_Chainage','Road Section'])
+    #             rsa_data = rsa_data.drop(columns=['Processed_Chainage','Road Section'])
+
+
+
+    #             # # Display the filtered data
+    #             # st.write(f"Filtered Data from File 1 for Chainage = {Chainage_filter3}:")
+    #             # st.dataframe(data1, use_container_width=True)
                 
-                # st.write(f"Filtered Data from File 2 for Chainage = {Chainage_filter3}:")
-                # st.dataframe(data2, use_container_width=True)
+    #             # st.write(f"Filtered Data from File 2 for Chainage = {Chainage_filter3}:")
+    #             # st.dataframe(data2, use_container_width=True)
 
-                grouped_data1 = data1.groupby(['Chainage']).sum().reset_index()
-                grouped_data2 = data2.groupby(['Chainage']).sum().reset_index()
-                grouped_data3 = rsa_data.groupby(['Chainage']).sum().reset_index()
+    #             grouped_data1 = data1.groupby(['Chainage']).sum().reset_index()
+    #             grouped_data2 = data2.groupby(['Chainage']).sum().reset_index()
+    #             grouped_data3 = rsa_data.groupby(['Chainage']).sum().reset_index()
 
                 
 
-                transposed_data1 = grouped_data1.transpose()
-                transposed_data2 = grouped_data2.transpose()
-                transposed_data3 = grouped_data3.transpose()
+    #             transposed_data1 = grouped_data1.transpose()
+    #             transposed_data2 = grouped_data2.transpose()
+    #             transposed_data3 = grouped_data3.transpose()
 
 
-                transposed_data1.columns = transposed_data1.iloc[0]
-                transposed_data1 = transposed_data1.iloc[1:]
+    #             transposed_data1.columns = transposed_data1.iloc[0]
+    #             transposed_data1 = transposed_data1.iloc[1:]
 
-                transposed_data2.columns = transposed_data2.iloc[0]
-                transposed_data2 = transposed_data2.iloc[1:]
+    #             transposed_data2.columns = transposed_data2.iloc[0]
+    #             transposed_data2 = transposed_data2.iloc[1:]
 
-                transposed_data3.columns = transposed_data3.iloc[0]
-                transposed_data3 = transposed_data3.iloc[1:]
+    #             transposed_data3.columns = transposed_data3.iloc[0]
+    #             transposed_data3 = transposed_data3.iloc[1:]
 
-                transposed_data1['LHS+RHS'] = transposed_data1.sum(axis=1)
-                transposed_data2['LHS+RHS'] = transposed_data2.sum(axis=1)
-                transposed_data3['LHS+RHS'] = transposed_data3.sum(axis=1)
-
-
-                gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
+    #             transposed_data1['LHS+RHS'] = transposed_data1.sum(axis=1)
+    #             transposed_data2['LHS+RHS'] = transposed_data2.sum(axis=1)
+    #             transposed_data3['LHS+RHS'] = transposed_data3.sum(axis=1)
 
 
-                st.write(f"According to PIU Excel uploaded as per Approved road signage plan for Chainage = {Chainage_filter3}:")
-                st.dataframe(transposed_data1, use_container_width=True)
-
-                st.write(f"Signages according to AI Survey undertaken by IIIT-D RoadAthena for Chainage = {Chainage_filter3}:")
-                st.dataframe(transposed_data2, use_container_width=True)
-
-                st.write(f"GAP Analysis for Chainage = {Chainage_filter3}:")
-                st.dataframe(gap_analysis, use_container_width=True)
-
-                st.write(f"Signages according to RSA Excel uploaded for Chainage = {Chainage_filter3}:")
-                st.dataframe(transposed_data3, use_container_width=True)
-
-                #### Graphical Representation
-                for i in range(len(transposed_data1.columns)):
-                    combined_df = pd.DataFrame({
-                        'PIU': transposed_data1[transposed_data1.columns[i]],
-                        'RA': transposed_data2[transposed_data1.columns[i]],
-                        'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
-                    })
-                    combined_df = combined_df[(combined_df != 0).any(axis=1)]
-
-                    if combined_df.empty:
-                        height = 300
-
-                        layout = go.Layout(
-                            title=f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}",
-                            barmode='group',
-                            xaxis=dict(title='Values'),
-                            yaxis=dict(title='Furniture Assets'),
-                            height=height,
-                            annotations=[
-                                dict(
-                                    x=0.5, y=0.5,
-                                    xref='paper', yref='paper',
-                                    text="There is no data to represent graphically",
-                                    showarrow=False,
-                                    font=dict(size=20, color='black'),
-                                    align='center'
-                                )
-                            ],
-                            bargap=0.3,
-                        )
-                        fig = go.Figure(data=[], layout=layout)
-                        st.plotly_chart(fig)
-
-                    else:
-                        traces1 = []
-
-                        traces1.append(go.Bar(
-                            y=combined_df.index,
-                            x=combined_df['Gap Analysis'],
-                            name=f'Gap Analysis',
-                            orientation='h',
-                            marker=dict(color='red'),
-                            text=combined_df['Gap Analysis'],
-                            textposition='outside',
-                        ))
-                        traces1.append(go.Bar(
-                            y=combined_df.index,
-                            x=combined_df['RA'],
-                            name=f'RA',
-                            orientation='h',
-                            marker=dict(color='green'),
-                            text=combined_df['RA'],
-                            textposition='outside',
-                        ))
-                        traces1.append(go.Bar(
-                            y=combined_df.index,
-                            x=combined_df['PIU'], 
-                            name=f'PIU',
-                            orientation='h',
-                            marker=dict(color='blue'),
-                            text=combined_df['PIU'],
-                            textposition='outside',
-                        ))
+    #             gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
 
 
+    #             st.write(f"According to PIU Excel uploaded as per Approved road signage plan for Chainage = {Chainage_filter3}:")
+    #             st.dataframe(transposed_data1, use_container_width=True)
 
-                        height = 300 if (len(combined_df) == 1) else len(combined_df) * 150
+    #             st.write(f"Signages according to AI Survey undertaken by IIIT-D RoadAthena for Chainage = {Chainage_filter3}:")
+    #             st.dataframe(transposed_data2, use_container_width=True)
 
-                        if i == 2:
-                            title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[0]}(LHS + RHS)"
-                        else:
-                            title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}"
+    #             st.write(f"GAP Analysis for Chainage = {Chainage_filter3}:")
+    #             st.dataframe(gap_analysis, use_container_width=True)
 
-                        layout = go.Layout(
-                            title= title,
-                            barmode='group',
-                            xaxis=dict(title='Values'),
-                            yaxis=dict(title='Furniture Assets'),
-                            height=height,
-                            shapes=[
-                                dict(
-                                    type='line',
-                                    x0=0, x1=0,
-                                    y0=0, y1=1,
-                                    xref='x', yref='paper',
-                                    line=dict(
-                                        color='black',
-                                        width=2,
-                                    ),
-                                )
-                            ],
-                            bargap=0.4,
-                        )
-                        fig = go.Figure(data=traces1, layout=layout)
-                        st.plotly_chart(fig)
+    #             st.write(f"Signages according to RSA Excel uploaded for Chainage = {Chainage_filter3}:")
+    #             st.dataframe(transposed_data3, use_container_width=True)
 
+    #             #### Graphical Representation
+    #             for i in range(len(transposed_data1.columns)):
+    #                 combined_df = pd.DataFrame({
+    #                     'PIU': transposed_data1[transposed_data1.columns[i]],
+    #                     'RA': transposed_data2[transposed_data1.columns[i]],
+    #                     'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
+    #                 })
+    #                 combined_df = combined_df[(combined_df != 0).any(axis=1)]
 
-            else:
-                data1 = final_data1.copy()
-                data2 = final_data2.copy()
+    #                 if combined_df.empty:
+    #                     height = 300
 
-                data1 = data1.drop(columns=['Chainage','Processed_Chainage','Road Section'])
-                data2 = data2.drop(columns=['Chainage','Processed_Chainage','Road Section'])
+    #                     layout = go.Layout(
+    #                         title=f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}",
+    #                         barmode='group',
+    #                         xaxis=dict(title='Values'),
+    #                         yaxis=dict(title='Furniture Assets'),
+    #                         height=height,
+    #                         annotations=[
+    #                             dict(
+    #                                 x=0.5, y=0.5,
+    #                                 xref='paper', yref='paper',
+    #                                 text="There is no data to represent graphically",
+    #                                 showarrow=False,
+    #                                 font=dict(size=20, color='black'),
+    #                                 align='center'
+    #                             )
+    #                         ],
+    #                         bargap=0.3,
+    #                     )
+    #                     fig = go.Figure(data=[], layout=layout)
+    #                     st.plotly_chart(fig)
 
-                transposed_data1 = pd.DataFrame(data1.sum(axis=0))
-                transposed_data2 = pd.DataFrame(data2.sum(axis=0))
+    #                 else:
+    #                     traces1 = []
 
-                transposed_data1.columns = ['LHS + RHS']
-                transposed_data2.columns = ['LHS + RHS']
-
-                gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
-
-                st.write(f"According to PIU Excel uploaded in December 2024 as per Approved road signage plan for all Chainages")
-                st.dataframe(transposed_data1, use_container_width=True)
-
-                st.write(f"Signages according to AI Survey undertaken by IIIT-D RoadAthena in October 2024 for all Chainages")
-                st.dataframe(transposed_data2, use_container_width=True)
-
-                st.write(f"GAP Analysis for all Chainages")
-                st.dataframe(gap_analysis, use_container_width=True)
-
-                #### Graphical Representation
-                for i in range(len(transposed_data1.columns)):
-                    combined_df = pd.DataFrame({
-                        'PIU': transposed_data1[transposed_data1.columns[i]],
-                        'RA': transposed_data2[transposed_data1.columns[i]],
-                        'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
-                    })
-                    combined_df = combined_df[(combined_df != 0).any(axis=1)]
-
-                    if combined_df.empty:
-                        height = 300
-
-                        layout = go.Layout(
-                            title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
-                            barmode='group',
-                            xaxis=dict(title='Values'),
-                            yaxis=dict(title='Furniture Assets'),
-                            height=height,
-                            annotations=[
-                                dict(
-                                    x=0.5, y=0.5,
-                                    xref='paper', yref='paper',
-                                    text="There is no data to represent graphically",
-                                    showarrow=False,
-                                    font=dict(size=20, color='black'),
-                                    align='center'
-                                )
-                            ],
-                            bargap=0.3,
-                        )
-                        fig = go.Figure(data=[], layout=layout)
-                        st.plotly_chart(fig)
-
-                    else:
-                        traces1 = []
-
-                        traces1.append(go.Bar(
-                            y=combined_df.index,
-                            x=combined_df['Gap Analysis'],
-                            name=f'Gap Analysis',
-                            orientation='h',
-                            marker=dict(color='red'),
-                            text=combined_df['Gap Analysis'],
-                            textposition='outside',
-                            cliponaxis=False
-                        ))
-                        traces1.append(go.Bar(
-                            y=combined_df.index,
-                            x=combined_df['RA'],
-                            name=f'RA',
-                            orientation='h',
-                            marker=dict(color='green'),
-                            text=combined_df['RA'],
-                            textposition='outside',
-                            cliponaxis=False
-                        ))
-                        traces1.append(go.Bar(
-                            y=combined_df.index,
-                            x=combined_df['PIU'], 
-                            name=f'PIU',
-                            orientation='h',
-                            marker=dict(color='blue'),
-                            text=combined_df['PIU'],
-                            textposition='outside',
-                            cliponaxis=False
-                        ))
-
-                        height = 300 if (len(combined_df) == 1) else len(combined_df) * 150
-
-                        layout = go.Layout(
-                            title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
-                            barmode='group',
-                            xaxis=dict(title='Values'),
-                            yaxis=dict(title='Furniture Assets'),
-                            height=height,
-                            shapes=[
-                                dict(
-                                    type='line',
-                                    x0=0, x1=0,
-                                    y0=0, y1=1,
-                                    xref='x', yref='paper',
-                                    line=dict(
-                                        color='black',
-                                        width=2,
-                                    ),
-                                )
-                            ],
-                            bargap=0.4,
-                        )
-                        fig = go.Figure(data=traces1, layout=layout)
-                        st.plotly_chart(fig)
+    #                     traces1.append(go.Bar(
+    #                         y=combined_df.index,
+    #                         x=combined_df['Gap Analysis'],
+    #                         name=f'Gap Analysis',
+    #                         orientation='h',
+    #                         marker=dict(color='red'),
+    #                         text=combined_df['Gap Analysis'],
+    #                         textposition='outside',
+    #                     ))
+    #                     traces1.append(go.Bar(
+    #                         y=combined_df.index,
+    #                         x=combined_df['RA'],
+    #                         name=f'RA',
+    #                         orientation='h',
+    #                         marker=dict(color='green'),
+    #                         text=combined_df['RA'],
+    #                         textposition='outside',
+    #                     ))
+    #                     traces1.append(go.Bar(
+    #                         y=combined_df.index,
+    #                         x=combined_df['PIU'], 
+    #                         name=f'PIU',
+    #                         orientation='h',
+    #                         marker=dict(color='blue'),
+    #                         text=combined_df['PIU'],
+    #                         textposition='outside',
+    #                     ))
 
 
-            ##################### 
-            ## Download as Word
-            #####################
-            if st.button('Generate Chainage Wise Report(Avenue & Median)'):
-                with st.spinner('Generating Report...'):
-                    data = {}
-                    for Chainage_filter3 in ["All"] + list(Chainage_values3):
+
+    #                     height = 300 if (len(combined_df) == 1) else len(combined_df) * 150
+
+    #                     if i == 2:
+    #                         title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[0]}(LHS + RHS)"
+    #                     else:
+    #                         title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}"
+
+    #                     layout = go.Layout(
+    #                         title= title,
+    #                         barmode='group',
+    #                         xaxis=dict(title='Values'),
+    #                         yaxis=dict(title='Furniture Assets'),
+    #                         height=height,
+    #                         shapes=[
+    #                             dict(
+    #                                 type='line',
+    #                                 x0=0, x1=0,
+    #                                 y0=0, y1=1,
+    #                                 xref='x', yref='paper',
+    #                                 line=dict(
+    #                                     color='black',
+    #                                     width=2,
+    #                                 ),
+    #                             )
+    #                         ],
+    #                         bargap=0.4,
+    #                     )
+    #                     fig = go.Figure(data=traces1, layout=layout)
+    #                     st.plotly_chart(fig)
+
+
+    #         else:
+    #             data1 = final_data1.copy()
+    #             data2 = final_data2.copy()
+
+    #             data1 = data1.drop(columns=['Chainage','Processed_Chainage','Road Section'])
+    #             data2 = data2.drop(columns=['Chainage','Processed_Chainage','Road Section'])
+
+    #             transposed_data1 = pd.DataFrame(data1.sum(axis=0))
+    #             transposed_data2 = pd.DataFrame(data2.sum(axis=0))
+
+    #             transposed_data1.columns = ['LHS + RHS']
+    #             transposed_data2.columns = ['LHS + RHS']
+
+    #             gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
+
+    #             st.write(f"According to PIU Excel uploaded in December 2024 as per Approved road signage plan for all Chainages")
+    #             st.dataframe(transposed_data1, use_container_width=True)
+
+    #             st.write(f"Signages according to AI Survey undertaken by IIIT-D RoadAthena in October 2024 for all Chainages")
+    #             st.dataframe(transposed_data2, use_container_width=True)
+
+    #             st.write(f"GAP Analysis for all Chainages")
+    #             st.dataframe(gap_analysis, use_container_width=True)
+
+    #             #### Graphical Representation
+    #             for i in range(len(transposed_data1.columns)):
+    #                 combined_df = pd.DataFrame({
+    #                     'PIU': transposed_data1[transposed_data1.columns[i]],
+    #                     'RA': transposed_data2[transposed_data1.columns[i]],
+    #                     'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
+    #                 })
+    #                 combined_df = combined_df[(combined_df != 0).any(axis=1)]
+
+    #                 if combined_df.empty:
+    #                     height = 300
+
+    #                     layout = go.Layout(
+    #                         title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
+    #                         barmode='group',
+    #                         xaxis=dict(title='Values'),
+    #                         yaxis=dict(title='Furniture Assets'),
+    #                         height=height,
+    #                         annotations=[
+    #                             dict(
+    #                                 x=0.5, y=0.5,
+    #                                 xref='paper', yref='paper',
+    #                                 text="There is no data to represent graphically",
+    #                                 showarrow=False,
+    #                                 font=dict(size=20, color='black'),
+    #                                 align='center'
+    #                             )
+    #                         ],
+    #                         bargap=0.3,
+    #                     )
+    #                     fig = go.Figure(data=[], layout=layout)
+    #                     st.plotly_chart(fig)
+
+    #                 else:
+    #                     traces1 = []
+
+    #                     traces1.append(go.Bar(
+    #                         y=combined_df.index,
+    #                         x=combined_df['Gap Analysis'],
+    #                         name=f'Gap Analysis',
+    #                         orientation='h',
+    #                         marker=dict(color='red'),
+    #                         text=combined_df['Gap Analysis'],
+    #                         textposition='outside',
+    #                         cliponaxis=False
+    #                     ))
+    #                     traces1.append(go.Bar(
+    #                         y=combined_df.index,
+    #                         x=combined_df['RA'],
+    #                         name=f'RA',
+    #                         orientation='h',
+    #                         marker=dict(color='green'),
+    #                         text=combined_df['RA'],
+    #                         textposition='outside',
+    #                         cliponaxis=False
+    #                     ))
+    #                     traces1.append(go.Bar(
+    #                         y=combined_df.index,
+    #                         x=combined_df['PIU'], 
+    #                         name=f'PIU',
+    #                         orientation='h',
+    #                         marker=dict(color='blue'),
+    #                         text=combined_df['PIU'],
+    #                         textposition='outside',
+    #                         cliponaxis=False
+    #                     ))
+
+    #                     height = 300 if (len(combined_df) == 1) else len(combined_df) * 150
+
+    #                     layout = go.Layout(
+    #                         title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
+    #                         barmode='group',
+    #                         xaxis=dict(title='Values'),
+    #                         yaxis=dict(title='Furniture Assets'),
+    #                         height=height,
+    #                         shapes=[
+    #                             dict(
+    #                                 type='line',
+    #                                 x0=0, x1=0,
+    #                                 y0=0, y1=1,
+    #                                 xref='x', yref='paper',
+    #                                 line=dict(
+    #                                     color='black',
+    #                                     width=2,
+    #                                 ),
+    #                             )
+    #                         ],
+    #                         bargap=0.4,
+    #                     )
+    #                     fig = go.Figure(data=traces1, layout=layout)
+    #                     st.plotly_chart(fig)
+
+
+    #         ##################### 
+    #         ## Download as Word
+    #         #####################
+    #         if st.button('Generate Chainage Wise Report(Avenue & Median)'):
+    #             with st.spinner('Generating Report...'):
+    #                 data = {}
+    #                 for Chainage_filter3 in ["All"] + list(Chainage_values3):
                             
-                        if Chainage_filter3 != "All":
-                            filtered_data1 = final_data1[final_data1['Processed_Chainage'] == Chainage_filter3]
-                            filtered_data2 = final_data2[final_data2['Processed_Chainage'] == Chainage_filter3]
+    #                     if Chainage_filter3 != "All":
+    #                         filtered_data1 = final_data1[final_data1['Processed_Chainage'] == Chainage_filter3]
+    #                         filtered_data2 = final_data2[final_data2['Processed_Chainage'] == Chainage_filter3]
 
-                            data1 = filtered_data1.copy()
-                            data2 = filtered_data2.copy()
+    #                         data1 = filtered_data1.copy()
+    #                         data2 = filtered_data2.copy()
 
-                            data1 = data1.drop(columns=['Processed_Chainage','Road Section'])
-                            data2 = data2.drop(columns=['Processed_Chainage','Road Section'])
-
-
-                            grouped_data1 = data1.groupby(['Chainage']).sum().reset_index()
-                            grouped_data2 = data2.groupby(['Chainage']).sum().reset_index()
-
-                            transposed_data1 = grouped_data1.transpose()
-                            transposed_data2 = grouped_data2.transpose()
-
-                            transposed_data1.columns = transposed_data1.iloc[0]
-                            transposed_data1 = transposed_data1.iloc[1:]
-
-                            transposed_data2.columns = transposed_data2.iloc[0]
-                            transposed_data2 = transposed_data2.iloc[1:]
-
-                            transposed_data1['LHS+RHS'] = transposed_data1.sum(axis=1)
-                            transposed_data2['LHS+RHS'] = transposed_data2.sum(axis=1)
-
-                            gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
-
-                            #### Graphical Representation
-                            figs = []
-                            for i in range(len(transposed_data1.columns)):
-                                combined_df = pd.DataFrame({
-                                    'PIU': transposed_data1[transposed_data1.columns[i]],
-                                    'RA': transposed_data2[transposed_data1.columns[i]],
-                                    'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
-                                })
-                                combined_df = combined_df[(combined_df != 0).any(axis=1)]
-
-                                if combined_df.empty:
-                                    height = 300
-
-                                    layout = go.Layout(
-                                        title=f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}",
-                                        barmode='group',
-                                        xaxis=dict(title='Values'),
-                                        yaxis=dict(title='Furniture Assets'),
-                                        height=height,
-                                        annotations=[
-                                            dict(
-                                                x=0.5, y=0.5,
-                                                xref='paper', yref='paper',
-                                                text="There is no data to represent graphically",
-                                                showarrow=False,
-                                                font=dict(size=20, color='black'),
-                                                align='center'
-                                            )
-                                        ],
-                                        bargap=0.2,
-                                    )
-                                    fig = go.Figure(data=[], layout=layout)
-                                    figs.append(fig)
-
-                                else:
-                                    traces1 = []
-
-                                    traces1.append(go.Bar(
-                                        y=combined_df.index,
-                                        x=combined_df['Gap Analysis'],
-                                        name=f'Gap Analysis',
-                                        orientation='h',
-                                        marker=dict(color='red'),
-                                        text=combined_df['Gap Analysis'],
-                                        textposition='outside',
-                                    ))
-                                    traces1.append(go.Bar(
-                                        y=combined_df.index,
-                                        x=combined_df['RA'],
-                                        name=f'RA',
-                                        orientation='h',
-                                        marker=dict(color='green'),
-                                        text=combined_df['RA'],
-                                        textposition='outside',
-                                    ))
-                                    traces1.append(go.Bar(
-                                        y=combined_df.index,
-                                        x=combined_df['PIU'], 
-                                        name=f'PIU',
-                                        orientation='h',
-                                        marker=dict(color='blue'),
-                                        text=combined_df['PIU'],
-                                        textposition='outside',
-                                    ))
-
-                            
-
-                                    height = 300 if (len(combined_df) == 1) else len(combined_df) * 120
-
-                                    if i == 2:
-                                        title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[0]}(LHS + RHS)"
-                                    else:
-                                        title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}"
-
-                                    layout = go.Layout(
-                                        title= title,
-                                        barmode='group',
-                                        xaxis=dict(title='Values'),
-                                        yaxis=dict(title='Furniture Assets'),
-                                        height=height,
-                                        margin=dict(
-                                            l=310,  # Left margin to give space for y-axis labels
-                                        ),
-                                        shapes=[
-                                            dict(
-                                                type='line',
-                                                x0=0, x1=0,
-                                                y0=0, y1=1,
-                                                xref='x', yref='paper',
-                                                line=dict(
-                                                    color='black',
-                                                    width=2,
-                                                ),
-                                            )
-                                        ],
-                                        bargap=0.2,
-                                    )
-                                    fig = go.Figure(data=traces1, layout=layout)
-                                    figs.append(fig)
-
-                            # Reset index for both DataFrames and assign a name to the new column
-                            transposed_data1_reset = transposed_data1.reset_index()
-                            transposed_data2_reset = transposed_data2.reset_index()
-                            gap_analysis_reset = gap_analysis.reset_index()
-
-                            # Optionally, rename the index column to 'Furniture Assets' or any other desired name
-                            transposed_data1_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
-                            transposed_data2_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
-                            gap_analysis_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
-
-                            data[Chainage_filter3] = (transposed_data1_reset, transposed_data2_reset, gap_analysis_reset, fig)
-
-                        else:
-                            data1 = final_data1.copy()
-                            data2 = final_data2.copy()
-
-                            data1 = data1.drop(columns=['Chainage','Processed_Chainage','Road Section'])
-                            data2 = data2.drop(columns=['Chainage','Processed_Chainage','Road Section'])
-
-                            transposed_data1 = pd.DataFrame(data1.sum(axis=0))
-                            transposed_data2 = pd.DataFrame(data2.sum(axis=0))
-
-                            transposed_data1.columns = ['LHS + RHS']
-                            transposed_data2.columns = ['LHS + RHS']
+    #                         data1 = data1.drop(columns=['Processed_Chainage','Road Section'])
+    #                         data2 = data2.drop(columns=['Processed_Chainage','Road Section'])
 
 
+    #                         grouped_data1 = data1.groupby(['Chainage']).sum().reset_index()
+    #                         grouped_data2 = data2.groupby(['Chainage']).sum().reset_index()
 
-                            gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
+    #                         transposed_data1 = grouped_data1.transpose()
+    #                         transposed_data2 = grouped_data2.transpose()
 
-                            #### Graphical Representation
-                            figs = []
-                            for i in range(len(transposed_data1.columns)):
-                                combined_df = pd.DataFrame({
-                                    'PIU': transposed_data1[transposed_data1.columns[i]],
-                                    'RA': transposed_data2[transposed_data1.columns[i]],
-                                    'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
-                                })
-                                combined_df = combined_df[(combined_df != 0).any(axis=1)]
+    #                         transposed_data1.columns = transposed_data1.iloc[0]
+    #                         transposed_data1 = transposed_data1.iloc[1:]
 
-                                if combined_df.empty:
-                                    height = 300
+    #                         transposed_data2.columns = transposed_data2.iloc[0]
+    #                         transposed_data2 = transposed_data2.iloc[1:]
 
-                                    layout = go.Layout(
-                                        title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
-                                        barmode='group',
-                                        xaxis=dict(title='Values'),
-                                        yaxis=dict(title='Furniture Assets'),
-                                        height=height,
-                                        margin=dict(
-                                            l=310,
-                                        ),
-                                        annotations=[
-                                            dict(
-                                                x=0.5, y=0.5,
-                                                xref='paper', yref='paper',
-                                                text="There is no data to represent graphically",
-                                                showarrow=False,
-                                                font=dict(size=20, color='black'),
-                                                align='center'
-                                            )
-                                        ],
-                                        bargap=0.2,
-                                    )
-                                    fig = go.Figure(data=[], layout=layout)
-                                    figs.append(fig)
+    #                         transposed_data1['LHS+RHS'] = transposed_data1.sum(axis=1)
+    #                         transposed_data2['LHS+RHS'] = transposed_data2.sum(axis=1)
 
+    #                         gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
 
+    #                         #### Graphical Representation
+    #                         figs = []
+    #                         for i in range(len(transposed_data1.columns)):
+    #                             combined_df = pd.DataFrame({
+    #                                 'PIU': transposed_data1[transposed_data1.columns[i]],
+    #                                 'RA': transposed_data2[transposed_data1.columns[i]],
+    #                                 'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
+    #                             })
+    #                             combined_df = combined_df[(combined_df != 0).any(axis=1)]
 
+    #                             if combined_df.empty:
+    #                                 height = 300
 
-                                else:
-                                    traces1 = []
+    #                                 layout = go.Layout(
+    #                                     title=f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}",
+    #                                     barmode='group',
+    #                                     xaxis=dict(title='Values'),
+    #                                     yaxis=dict(title='Furniture Assets'),
+    #                                     height=height,
+    #                                     annotations=[
+    #                                         dict(
+    #                                             x=0.5, y=0.5,
+    #                                             xref='paper', yref='paper',
+    #                                             text="There is no data to represent graphically",
+    #                                             showarrow=False,
+    #                                             font=dict(size=20, color='black'),
+    #                                             align='center'
+    #                                         )
+    #                                     ],
+    #                                     bargap=0.2,
+    #                                 )
+    #                                 fig = go.Figure(data=[], layout=layout)
+    #                                 figs.append(fig)
 
-                                    traces1.append(go.Bar(
-                                        y=combined_df.index,
-                                        x=combined_df['Gap Analysis'],
-                                        name=f'Gap Analysis',
-                                        orientation='h',
-                                        marker=dict(color='red'),
-                                        text=combined_df['Gap Analysis'],
-                                        textposition='outside',
-                                        cliponaxis=False
-                                    ))
-                                    traces1.append(go.Bar(
-                                        y=combined_df.index,
-                                        x=combined_df['RA'],
-                                        name=f'RA',
-                                        orientation='h',
-                                        marker=dict(color='green'),
-                                        text=combined_df['RA'],
-                                        textposition='outside',
-                                        cliponaxis=False
-                                    ))
-                                    traces1.append(go.Bar(
-                                        y=combined_df.index,
-                                        x=combined_df['PIU'], 
-                                        name=f'PIU',
-                                        orientation='h',
-                                        marker=dict(color='blue'),
-                                        text=combined_df['PIU'],
-                                        textposition='outside',
-                                        cliponaxis=False
-                                    ))
+    #                             else:
+    #                                 traces1 = []
+
+    #                                 traces1.append(go.Bar(
+    #                                     y=combined_df.index,
+    #                                     x=combined_df['Gap Analysis'],
+    #                                     name=f'Gap Analysis',
+    #                                     orientation='h',
+    #                                     marker=dict(color='red'),
+    #                                     text=combined_df['Gap Analysis'],
+    #                                     textposition='outside',
+    #                                 ))
+    #                                 traces1.append(go.Bar(
+    #                                     y=combined_df.index,
+    #                                     x=combined_df['RA'],
+    #                                     name=f'RA',
+    #                                     orientation='h',
+    #                                     marker=dict(color='green'),
+    #                                     text=combined_df['RA'],
+    #                                     textposition='outside',
+    #                                 ))
+    #                                 traces1.append(go.Bar(
+    #                                     y=combined_df.index,
+    #                                     x=combined_df['PIU'], 
+    #                                     name=f'PIU',
+    #                                     orientation='h',
+    #                                     marker=dict(color='blue'),
+    #                                     text=combined_df['PIU'],
+    #                                     textposition='outside',
+    #                                 ))
 
                             
 
-                                    height = 300 if (len(combined_df) == 1) else len(combined_df) * 120
+    #                                 height = 300 if (len(combined_df) == 1) else len(combined_df) * 120
 
-                                    layout = go.Layout(
-                                        title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
-                                        barmode='group',
-                                        xaxis=dict(title='Values'),
-                                        yaxis=dict(title='           Furniture Assets           '),
-                                        height=height,
-                                        margin=dict(
-                                            l=310,
-                                        ),
-                                        shapes=[
-                                            dict(
-                                                type='line',
-                                                x0=0, x1=0,
-                                                y0=0, y1=1,
-                                                xref='x', yref='paper',
-                                                line=dict(
-                                                    color='black',
-                                                    width=2,
-                                                ),
-                                            )
-                                        ],
-                                        bargap=0.2,
-                                    )
-                                    fig = go.Figure(data=traces1, layout=layout)
+    #                                 if i == 2:
+    #                                     title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[0]}(LHS + RHS)"
+    #                                 else:
+    #                                     title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}"
 
-                                    figs.append(fig)
+    #                                 layout = go.Layout(
+    #                                     title= title,
+    #                                     barmode='group',
+    #                                     xaxis=dict(title='Values'),
+    #                                     yaxis=dict(title='Furniture Assets'),
+    #                                     height=height,
+    #                                     margin=dict(
+    #                                         l=310,  # Left margin to give space for y-axis labels
+    #                                     ),
+    #                                     shapes=[
+    #                                         dict(
+    #                                             type='line',
+    #                                             x0=0, x1=0,
+    #                                             y0=0, y1=1,
+    #                                             xref='x', yref='paper',
+    #                                             line=dict(
+    #                                                 color='black',
+    #                                                 width=2,
+    #                                             ),
+    #                                         )
+    #                                     ],
+    #                                     bargap=0.2,
+    #                                 )
+    #                                 fig = go.Figure(data=traces1, layout=layout)
+    #                                 figs.append(fig)
+
+    #                         # Reset index for both DataFrames and assign a name to the new column
+    #                         transposed_data1_reset = transposed_data1.reset_index()
+    #                         transposed_data2_reset = transposed_data2.reset_index()
+    #                         gap_analysis_reset = gap_analysis.reset_index()
+
+    #                         # Optionally, rename the index column to 'Furniture Assets' or any other desired name
+    #                         transposed_data1_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
+    #                         transposed_data2_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
+    #                         gap_analysis_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
+
+    #                         data[Chainage_filter3] = (transposed_data1_reset, transposed_data2_reset, gap_analysis_reset, fig)
+
+    #                     else:
+    #                         data1 = final_data1.copy()
+    #                         data2 = final_data2.copy()
+
+    #                         data1 = data1.drop(columns=['Chainage','Processed_Chainage','Road Section'])
+    #                         data2 = data2.drop(columns=['Chainage','Processed_Chainage','Road Section'])
+
+    #                         transposed_data1 = pd.DataFrame(data1.sum(axis=0))
+    #                         transposed_data2 = pd.DataFrame(data2.sum(axis=0))
+
+    #                         transposed_data1.columns = ['LHS + RHS']
+    #                         transposed_data2.columns = ['LHS + RHS']
+
+
+
+    #                         gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
+
+    #                         #### Graphical Representation
+    #                         figs = []
+    #                         for i in range(len(transposed_data1.columns)):
+    #                             combined_df = pd.DataFrame({
+    #                                 'PIU': transposed_data1[transposed_data1.columns[i]],
+    #                                 'RA': transposed_data2[transposed_data1.columns[i]],
+    #                                 'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
+    #                             })
+    #                             combined_df = combined_df[(combined_df != 0).any(axis=1)]
+
+    #                             if combined_df.empty:
+    #                                 height = 300
+
+    #                                 layout = go.Layout(
+    #                                     title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
+    #                                     barmode='group',
+    #                                     xaxis=dict(title='Values'),
+    #                                     yaxis=dict(title='Furniture Assets'),
+    #                                     height=height,
+    #                                     margin=dict(
+    #                                         l=310,
+    #                                     ),
+    #                                     annotations=[
+    #                                         dict(
+    #                                             x=0.5, y=0.5,
+    #                                             xref='paper', yref='paper',
+    #                                             text="There is no data to represent graphically",
+    #                                             showarrow=False,
+    #                                             font=dict(size=20, color='black'),
+    #                                             align='center'
+    #                                         )
+    #                                     ],
+    #                                     bargap=0.2,
+    #                                 )
+    #                                 fig = go.Figure(data=[], layout=layout)
+    #                                 figs.append(fig)
+
+
+
+
+    #                             else:
+    #                                 traces1 = []
+
+    #                                 traces1.append(go.Bar(
+    #                                     y=combined_df.index,
+    #                                     x=combined_df['Gap Analysis'],
+    #                                     name=f'Gap Analysis',
+    #                                     orientation='h',
+    #                                     marker=dict(color='red'),
+    #                                     text=combined_df['Gap Analysis'],
+    #                                     textposition='outside',
+    #                                     cliponaxis=False
+    #                                 ))
+    #                                 traces1.append(go.Bar(
+    #                                     y=combined_df.index,
+    #                                     x=combined_df['RA'],
+    #                                     name=f'RA',
+    #                                     orientation='h',
+    #                                     marker=dict(color='green'),
+    #                                     text=combined_df['RA'],
+    #                                     textposition='outside',
+    #                                     cliponaxis=False
+    #                                 ))
+    #                                 traces1.append(go.Bar(
+    #                                     y=combined_df.index,
+    #                                     x=combined_df['PIU'], 
+    #                                     name=f'PIU',
+    #                                     orientation='h',
+    #                                     marker=dict(color='blue'),
+    #                                     text=combined_df['PIU'],
+    #                                     textposition='outside',
+    #                                     cliponaxis=False
+    #                                 ))
+
+                            
+
+    #                                 height = 300 if (len(combined_df) == 1) else len(combined_df) * 120
+
+    #                                 layout = go.Layout(
+    #                                     title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
+    #                                     barmode='group',
+    #                                     xaxis=dict(title='Values'),
+    #                                     yaxis=dict(title='           Furniture Assets           '),
+    #                                     height=height,
+    #                                     margin=dict(
+    #                                         l=310,
+    #                                     ),
+    #                                     shapes=[
+    #                                         dict(
+    #                                             type='line',
+    #                                             x0=0, x1=0,
+    #                                             y0=0, y1=1,
+    #                                             xref='x', yref='paper',
+    #                                             line=dict(
+    #                                                 color='black',
+    #                                                 width=2,
+    #                                             ),
+    #                                         )
+    #                                     ],
+    #                                     bargap=0.2,
+    #                                 )
+    #                                 fig = go.Figure(data=traces1, layout=layout)
+
+    #                                 figs.append(fig)
                         
-                            # Reset index for both DataFrames and assign a name to the new column
-                            transposed_data1_reset = transposed_data1.reset_index()
-                            transposed_data2_reset = transposed_data2.reset_index()
-                            gap_analysis_reset = gap_analysis.reset_index()
+    #                         # Reset index for both DataFrames and assign a name to the new column
+    #                         transposed_data1_reset = transposed_data1.reset_index()
+    #                         transposed_data2_reset = transposed_data2.reset_index()
+    #                         gap_analysis_reset = gap_analysis.reset_index()
 
-                            # Optionally, rename the index column to 'Furniture Assets' or any other desired name
-                            transposed_data1_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
-                            transposed_data2_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
-                            gap_analysis_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
+    #                         # Optionally, rename the index column to 'Furniture Assets' or any other desired name
+    #                         transposed_data1_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
+    #                         transposed_data2_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
+    #                         gap_analysis_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
 
-                            data[Chainage_filter3] = (transposed_data1_reset, transposed_data2_reset, gap_analysis_reset, fig)
+    #                         data[Chainage_filter3] = (transposed_data1_reset, transposed_data2_reset, gap_analysis_reset, fig)
 
-                    create_word_doc(data, file_name="Chainage_Wise_Analyzed_Data.docx")
-                    st.success('Report generated successfully!')
-                    with open("Chainage_Wise_Analyzed_Data.docx", "rb") as file:
-                        st.download_button("Chainage_Wise_Analyzed_Data.docx", file, "Chainage_Wise_Analyzed_Data.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
-
-
-        #################################################################################################################################################
-        #################################################################################################################################################
-        #################################################################################################################################################
-        #################################################################################################################################################
-        #################################################################################################################################################
-        #################################################################################################################################################
+    #                 create_word_doc(data, file_name="Chainage_Wise_Analyzed_Data.docx")
+    #                 st.success('Report generated successfully!')
+    #                 with open("Chainage_Wise_Analyzed_Data.docx", "rb") as file:
+    #                     st.download_button("Chainage_Wise_Analyzed_Data.docx", file, "Chainage_Wise_Analyzed_Data.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 
 
-            st.header("Analyzed Data(Furniture Assets):")
-            final_data1_new['Processed_Chainage'] = final_data1_new['Chainage'].apply(preprocess_chainage)
-            final_data2_new['Processed_Chainage'] = final_data2_new['Chainage'].apply(preprocess_chainage)
-            Chainage_values4 = final_data1_new['Processed_Chainage'].unique() 
-            Chainage_filter4 = st.selectbox("Select Chainage value to filter",["All"] + list(Chainage_values4), key="Chainage_filter4")
-
-            if Chainage_filter4 != "All":
-                filtered_data1 = final_data1_new[final_data1_new['Processed_Chainage'] == Chainage_filter4]
-                filtered_data2 = final_data2_new[final_data2_new['Processed_Chainage'] == Chainage_filter4]
-
-                data1 = filtered_data1.copy()
-                data2 = filtered_data2.copy()
-
-                data1 = data1.drop(columns=['Processed_Chainage','Road Section'])
-                data2 = data2.drop(columns=['Processed_Chainage','Road Section'])
+    #     #################################################################################################################################################
+    #     #################################################################################################################################################
+    #     #################################################################################################################################################
+    #     #################################################################################################################################################
+    #     #################################################################################################################################################
+    #     #################################################################################################################################################
 
 
+    #         st.header("Analyzed Data(Furniture Assets):")
+    #         final_data1_new['Processed_Chainage'] = final_data1_new['Chainage'].apply(preprocess_chainage)
+    #         final_data2_new['Processed_Chainage'] = final_data2_new['Chainage'].apply(preprocess_chainage)
+    #         Chainage_values4 = final_data1_new['Processed_Chainage'].unique() 
+    #         Chainage_filter4 = st.selectbox("Select Chainage value to filter",["All"] + list(Chainage_values4), key="Chainage_filter4")
 
-                # # Display the filtered data
-                # st.write(f"Filtered Data from File 1 for Chainage = {Chainage_filter3}:")
-                # st.dataframe(data1, use_container_width=True)
+    #         if Chainage_filter4 != "All":
+    #             filtered_data1 = final_data1_new[final_data1_new['Processed_Chainage'] == Chainage_filter4]
+    #             filtered_data2 = final_data2_new[final_data2_new['Processed_Chainage'] == Chainage_filter4]
+
+    #             data1 = filtered_data1.copy()
+    #             data2 = filtered_data2.copy()
+
+    #             data1 = data1.drop(columns=['Processed_Chainage','Road Section'])
+    #             data2 = data2.drop(columns=['Processed_Chainage','Road Section'])
+
+
+
+    #             # # Display the filtered data
+    #             # st.write(f"Filtered Data from File 1 for Chainage = {Chainage_filter3}:")
+    #             # st.dataframe(data1, use_container_width=True)
                 
-                # st.write(f"Filtered Data from File 2 for Chainage = {Chainage_filter3}:")
-                # st.dataframe(data2, use_container_width=True)
+    #             # st.write(f"Filtered Data from File 2 for Chainage = {Chainage_filter3}:")
+    #             # st.dataframe(data2, use_container_width=True)
 
-                grouped_data1 = data1.groupby(['Chainage']).sum().reset_index()
-                grouped_data2 = data2.groupby(['Chainage']).sum().reset_index()
+    #             grouped_data1 = data1.groupby(['Chainage']).sum().reset_index()
+    #             grouped_data2 = data2.groupby(['Chainage']).sum().reset_index()
 
-                transposed_data1 = grouped_data1.transpose()
-                transposed_data2 = grouped_data2.transpose()
+    #             transposed_data1 = grouped_data1.transpose()
+    #             transposed_data2 = grouped_data2.transpose()
 
-                transposed_data1.columns = transposed_data1.iloc[0]
-                transposed_data1 = transposed_data1.iloc[1:]
+    #             transposed_data1.columns = transposed_data1.iloc[0]
+    #             transposed_data1 = transposed_data1.iloc[1:]
 
-                transposed_data2.columns = transposed_data2.iloc[0]
-                transposed_data2 = transposed_data2.iloc[1:]
+    #             transposed_data2.columns = transposed_data2.iloc[0]
+    #             transposed_data2 = transposed_data2.iloc[1:]
 
-                transposed_data1['LHS+RHS'] = transposed_data1.sum(axis=1)
-                transposed_data2['LHS+RHS'] = transposed_data2.sum(axis=1)
+    #             transposed_data1['LHS+RHS'] = transposed_data1.sum(axis=1)
+    #             transposed_data2['LHS+RHS'] = transposed_data2.sum(axis=1)
 
-                gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
-
-
-                st.write(f"According to PIU Excel uploaded in December 2024 as per Approved road signage plan for Chainage = {Chainage_filter4}:")
-                st.dataframe(transposed_data1, use_container_width=True)
-
-                st.write(f"Signages according to AI Survey undertaken by IIIT-D RoadAthena in October 2024 for Chainage = {Chainage_filter4}:")
-                st.dataframe(transposed_data2, use_container_width=True)
-
-                st.write(f"GAP Analysis for Chainage = {Chainage_filter4}:")
-                st.dataframe(gap_analysis, use_container_width=True)
-
-                #### Graphical Representation
-                for i in range(len(transposed_data1.columns)):
-                    combined_df = pd.DataFrame({
-                        'PIU': transposed_data1[transposed_data1.columns[i]],
-                        'RA': transposed_data2[transposed_data1.columns[i]],
-                        'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
-                    })
-                    combined_df = combined_df[(combined_df != 0).any(axis=1)]
-                    x_labels = combined_df.index
-                    index_map = {
-                        'Chevron': 'Chevron',
-                        'Cautionary Warning Signs': 'Cautionary <br>Warning Signs',
-                        'Hazard': 'Hazard',
-                        'Prohibitory Mandatory Signs': 'Prohibitory <br>Mandatory Signs',
-                        'Informatory Signs': 'Informatory <br>Signs',
-                    }
-
-                    x_labels_with_br = [index_map.get(label, label) for label in combined_df.index]
-                    if combined_df.empty:
-                        height = 300
-
-                        layout = go.Layout(
-                            title=f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}",
-                            barmode='group',
-                            xaxis=dict(
-                                title='Furniture Assets',
-                                tickvals=combined_df.index,  # The positions of the ticks on the x-axis
-                                ticktext=x_labels_with_br,  # Labels with line breaks
-                                tickangle=0,  # Rotate labels for better visibility, if needed
-                            ),
-                            yaxis=dict(title='Values'),
-                            # height=height,
-                            annotations=[
-                                dict(
-                                    x=0.5, y=0.5,
-                                    xref='paper', yref='paper',
-                                    text="There is no data to represent graphically",
-                                    showarrow=False,
-                                    font=dict(size=20, color='black'),
-                                    align='center'
-                                )
-                            ],
-                            bargap=0.3,
-                        )
-                        fig = go.Figure(data=[], layout=layout)
-                        st.plotly_chart(fig)
-
-                    else:
-                        traces1 = []
-                        max_value = max(abs(combined_df['Gap Analysis'].max()), abs(combined_df['RA'].max()), abs(combined_df['PIU'].max()))
-
-                        traces1.append(go.Bar(
-                            x=combined_df.index,
-                            y=combined_df['PIU'], 
-                            name=f'PIU',
-                            orientation='v',
-                            marker=dict(color='blue'),
-                            text=combined_df['PIU'],
-                            textposition='outside',
-                        ))
-                        traces1.append(go.Bar(
-                            x=combined_df.index,
-                            y=combined_df['RA'],
-                            name=f'RA',
-                            orientation='v',
-                            marker=dict(color='green'),
-                            text=combined_df['RA'],
-                            textposition='outside',
-                        ))
-                        traces1.append(go.Bar(
-                            x=combined_df.index,
-                            y=combined_df['Gap Analysis'],
-                            name=f'Gap Analysis',
-                            orientation='v',
-                            marker=dict(color='red'),
-                            text=combined_df['Gap Analysis'],
-                            textposition='outside',
-                        ))
+    #             gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
 
 
+    #             st.write(f"According to PIU Excel uploaded in December 2024 as per Approved road signage plan for Chainage = {Chainage_filter4}:")
+    #             st.dataframe(transposed_data1, use_container_width=True)
 
-                        height = 300 if (len(combined_df) == 1) else len(combined_df) * 150
+    #             st.write(f"Signages according to AI Survey undertaken by IIIT-D RoadAthena in October 2024 for Chainage = {Chainage_filter4}:")
+    #             st.dataframe(transposed_data2, use_container_width=True)
 
-                        if i == 2:
-                            title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[0]}(LHS + RHS)"
-                        else:
-                            title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}"
+    #             st.write(f"GAP Analysis for Chainage = {Chainage_filter4}:")
+    #             st.dataframe(gap_analysis, use_container_width=True)
 
-                        layout = go.Layout(
-                            title= title,
-                            barmode='group',
-                            xaxis=dict(
-                                title='Furniture Assets',
-                                tickvals=combined_df.index,  # The positions of the ticks on the x-axis
-                                ticktext=x_labels_with_br,  # Labels with line breaks
-                                tickangle=0,  # Rotate labels for better visibility, if needed
-                            ),
-                            yaxis=dict(title='Values'),
-                            # height=height,
-                            shapes=[
-                                dict(
-                                    type='line',
-                                    x0=0, x1=1,
-                                    y0=0, y1=0,
-                                    yref='y', xref='paper',
-                                    line=dict(
-                                        color='black',
-                                        width=2,
-                                    ),
-                                )
-                            ],
-                            bargap=0.4,
-                        )
-                        fig = go.Figure(data=traces1, layout=layout)
-                        st.plotly_chart(fig)
+    #             #### Graphical Representation
+    #             for i in range(len(transposed_data1.columns)):
+    #                 combined_df = pd.DataFrame({
+    #                     'PIU': transposed_data1[transposed_data1.columns[i]],
+    #                     'RA': transposed_data2[transposed_data1.columns[i]],
+    #                     'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
+    #                 })
+    #                 combined_df = combined_df[(combined_df != 0).any(axis=1)]
+    #                 x_labels = combined_df.index
+    #                 index_map = {
+    #                     'Chevron': 'Chevron',
+    #                     'Cautionary Warning Signs': 'Cautionary <br>Warning Signs',
+    #                     'Hazard': 'Hazard',
+    #                     'Prohibitory Mandatory Signs': 'Prohibitory <br>Mandatory Signs',
+    #                     'Informatory Signs': 'Informatory <br>Signs',
+    #                 }
 
+    #                 x_labels_with_br = [index_map.get(label, label) for label in combined_df.index]
+    #                 if combined_df.empty:
+    #                     height = 300
 
-            else:
-                data1 = final_data1_new.copy()
-                data2 = final_data2_new.copy()
+    #                     layout = go.Layout(
+    #                         title=f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}",
+    #                         barmode='group',
+    #                         xaxis=dict(
+    #                             title='Furniture Assets',
+    #                             tickvals=combined_df.index,  # The positions of the ticks on the x-axis
+    #                             ticktext=x_labels_with_br,  # Labels with line breaks
+    #                             tickangle=0,  # Rotate labels for better visibility, if needed
+    #                         ),
+    #                         yaxis=dict(title='Values'),
+    #                         # height=height,
+    #                         annotations=[
+    #                             dict(
+    #                                 x=0.5, y=0.5,
+    #                                 xref='paper', yref='paper',
+    #                                 text="There is no data to represent graphically",
+    #                                 showarrow=False,
+    #                                 font=dict(size=20, color='black'),
+    #                                 align='center'
+    #                             )
+    #                         ],
+    #                         bargap=0.3,
+    #                     )
+    #                     fig = go.Figure(data=[], layout=layout)
+    #                     st.plotly_chart(fig)
 
-                data1 = data1.drop(columns=['Chainage','Processed_Chainage','Road Section'])
-                data2 = data2.drop(columns=['Chainage','Processed_Chainage','Road Section'])
+    #                 else:
+    #                     traces1 = []
+    #                     max_value = max(abs(combined_df['Gap Analysis'].max()), abs(combined_df['RA'].max()), abs(combined_df['PIU'].max()))
 
-                transposed_data1 = pd.DataFrame(data1.sum(axis=0))
-                transposed_data2 = pd.DataFrame(data2.sum(axis=0))
-
-                transposed_data1.columns = ['LHS + RHS']
-                transposed_data2.columns = ['LHS + RHS']
-
-                gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
-
-                st.write(f"According to PIU Excel uploaded in December 2024 as per Approved road signage plan for all Chainages")
-                st.dataframe(transposed_data1, use_container_width=True)
-
-                st.write(f"Signages according to AI Survey undertaken by IIIT-D RoadAthena in October 2024 for all Chainages")
-                st.dataframe(transposed_data2, use_container_width=True)
-
-                st.write(f"GAP Analysis for all Chainages")
-                st.dataframe(gap_analysis, use_container_width=True)
-
-                #### Graphical Representation
-                for i in range(len(transposed_data1.columns)):
-                    combined_df = pd.DataFrame({
-                        'PIU': transposed_data1[transposed_data1.columns[i]],
-                        'RA': transposed_data2[transposed_data1.columns[i]],
-                        'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
-                    })
-                    combined_df = combined_df[(combined_df != 0).any(axis=1)]
-                    x_labels = combined_df.index
-                    index_map = {
-                        'Chevron': 'Chevron',
-                        'Cautionary Warning Signs': 'Cautionary <br>Warning Signs',
-                        'Hazard': 'Hazard',
-                        'Prohibitory Mandatory Signs': 'Prohibitory <br>Mandatory Signs',
-                        'Informatory Signs': 'Informatory <br>Signs',
-                    }
-
-                    x_labels_with_br = [index_map.get(label, label) for label in combined_df.index]
-
-                    if combined_df.empty:
-                        height = 300
-
-                        layout = go.Layout(
-                            title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
-                            barmode='group',
-                            xaxis=dict(
-                                title='Furniture Assets',
-                                tickvals=combined_df.index,  # The positions of the ticks on the x-axis
-                                ticktext=x_labels_with_br,  # Labels with line breaks
-                                tickangle=0,  # Rotate labels for better visibility, if needed
-                            ),
-                            yaxis=dict(title='Values'),
-                            # height=height,
-                            annotations=[
-                                dict(
-                                    x=0.5, y=0.5,
-                                    xref='paper', yref='paper',
-                                    text="There is no data to represent graphically",
-                                    showarrow=False,
-                                    font=dict(size=20, color='black'),
-                                    align='center'
-                                )
-                            ],
-                            bargap=0.3,
-                        )
-                        fig = go.Figure(data=[], layout=layout)
-                        st.plotly_chart(fig)
-
-                    else:
-                        traces1 = []
-
-                        traces1.append(go.Bar(
-                            x=combined_df.index,
-                            y=combined_df['PIU'], 
-                            name=f'PIU',
-                            orientation='v',
-                            marker=dict(color='blue'),
-                            text=combined_df['PIU'],
-                            textposition='outside',
-                            cliponaxis=False
-                        ))
-                        traces1.append(go.Bar(
-                            x=combined_df.index,
-                            y=combined_df['RA'],
-                            name=f'RA',
-                            orientation='v',
-                            marker=dict(color='green'),
-                            text=combined_df['RA'],
-                            textposition='outside',
-                            cliponaxis=False
-                        ))
-                        traces1.append(go.Bar(
-                            x=combined_df.index,
-                            y=combined_df['Gap Analysis'],
-                            name=f'Gap Analysis',
-                            orientation='v',
-                            marker=dict(color='red'),
-                            text=combined_df['Gap Analysis'],
-                            textposition='outside',
-                            cliponaxis=False
-                        ))
-
-                        height = 300 if (len(combined_df) == 1) else len(combined_df) * 150
-
-                        layout = go.Layout(
-                            title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
-                            barmode='group',
-                            xaxis=dict(
-                                title='Furniture Assets',
-                                tickvals=combined_df.index,  # The positions of the ticks on the x-axis
-                                ticktext=x_labels_with_br,  # Labels with line breaks
-                                tickangle=0,  # Rotate labels for better visibility, if needed
-                            ),
-                            yaxis=dict(title='Values'),
-                            # height=height,
-                            shapes=[
-                                dict(
-                                    type='line',
-                                    x0=0, x1=1,
-                                    y0=0, y1=0,
-                                    yref='y', xref='paper',
-                                    line=dict(
-                                        color='black',
-                                        width=2,
-                                    ),
-                                )
-                            ],
-                            bargap=0.4,
-                        )
-                        fig = go.Figure(data=traces1, layout=layout)
-                        st.plotly_chart(fig)
+    #                     traces1.append(go.Bar(
+    #                         x=combined_df.index,
+    #                         y=combined_df['PIU'], 
+    #                         name=f'PIU',
+    #                         orientation='v',
+    #                         marker=dict(color='blue'),
+    #                         text=combined_df['PIU'],
+    #                         textposition='outside',
+    #                     ))
+    #                     traces1.append(go.Bar(
+    #                         x=combined_df.index,
+    #                         y=combined_df['RA'],
+    #                         name=f'RA',
+    #                         orientation='v',
+    #                         marker=dict(color='green'),
+    #                         text=combined_df['RA'],
+    #                         textposition='outside',
+    #                     ))
+    #                     traces1.append(go.Bar(
+    #                         x=combined_df.index,
+    #                         y=combined_df['Gap Analysis'],
+    #                         name=f'Gap Analysis',
+    #                         orientation='v',
+    #                         marker=dict(color='red'),
+    #                         text=combined_df['Gap Analysis'],
+    #                         textposition='outside',
+    #                     ))
 
 
-            # ##################### 
-            # ## Download as Word
-            # #####################
-            if st.button('Generate Chainage Wise Report(Furniture Assets)'):
-                with st.spinner('Generating Report...'):
-                    data = {}
-                    for Chainage_filter4 in ["All"] + list(Chainage_values3):
+
+    #                     height = 300 if (len(combined_df) == 1) else len(combined_df) * 150
+
+    #                     if i == 2:
+    #                         title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[0]}(LHS + RHS)"
+    #                     else:
+    #                         title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}"
+
+    #                     layout = go.Layout(
+    #                         title= title,
+    #                         barmode='group',
+    #                         xaxis=dict(
+    #                             title='Furniture Assets',
+    #                             tickvals=combined_df.index,  # The positions of the ticks on the x-axis
+    #                             ticktext=x_labels_with_br,  # Labels with line breaks
+    #                             tickangle=0,  # Rotate labels for better visibility, if needed
+    #                         ),
+    #                         yaxis=dict(title='Values'),
+    #                         # height=height,
+    #                         shapes=[
+    #                             dict(
+    #                                 type='line',
+    #                                 x0=0, x1=1,
+    #                                 y0=0, y1=0,
+    #                                 yref='y', xref='paper',
+    #                                 line=dict(
+    #                                     color='black',
+    #                                     width=2,
+    #                                 ),
+    #                             )
+    #                         ],
+    #                         bargap=0.4,
+    #                     )
+    #                     fig = go.Figure(data=traces1, layout=layout)
+    #                     st.plotly_chart(fig)
+
+
+    #         else:
+    #             data1 = final_data1_new.copy()
+    #             data2 = final_data2_new.copy()
+
+    #             data1 = data1.drop(columns=['Chainage','Processed_Chainage','Road Section'])
+    #             data2 = data2.drop(columns=['Chainage','Processed_Chainage','Road Section'])
+
+    #             transposed_data1 = pd.DataFrame(data1.sum(axis=0))
+    #             transposed_data2 = pd.DataFrame(data2.sum(axis=0))
+
+    #             transposed_data1.columns = ['LHS + RHS']
+    #             transposed_data2.columns = ['LHS + RHS']
+
+    #             gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
+
+    #             st.write(f"According to PIU Excel uploaded in December 2024 as per Approved road signage plan for all Chainages")
+    #             st.dataframe(transposed_data1, use_container_width=True)
+
+    #             st.write(f"Signages according to AI Survey undertaken by IIIT-D RoadAthena in October 2024 for all Chainages")
+    #             st.dataframe(transposed_data2, use_container_width=True)
+
+    #             st.write(f"GAP Analysis for all Chainages")
+    #             st.dataframe(gap_analysis, use_container_width=True)
+
+    #             #### Graphical Representation
+    #             for i in range(len(transposed_data1.columns)):
+    #                 combined_df = pd.DataFrame({
+    #                     'PIU': transposed_data1[transposed_data1.columns[i]],
+    #                     'RA': transposed_data2[transposed_data1.columns[i]],
+    #                     'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
+    #                 })
+    #                 combined_df = combined_df[(combined_df != 0).any(axis=1)]
+    #                 x_labels = combined_df.index
+    #                 index_map = {
+    #                     'Chevron': 'Chevron',
+    #                     'Cautionary Warning Signs': 'Cautionary <br>Warning Signs',
+    #                     'Hazard': 'Hazard',
+    #                     'Prohibitory Mandatory Signs': 'Prohibitory <br>Mandatory Signs',
+    #                     'Informatory Signs': 'Informatory <br>Signs',
+    #                 }
+
+    #                 x_labels_with_br = [index_map.get(label, label) for label in combined_df.index]
+
+    #                 if combined_df.empty:
+    #                     height = 300
+
+    #                     layout = go.Layout(
+    #                         title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
+    #                         barmode='group',
+    #                         xaxis=dict(
+    #                             title='Furniture Assets',
+    #                             tickvals=combined_df.index,  # The positions of the ticks on the x-axis
+    #                             ticktext=x_labels_with_br,  # Labels with line breaks
+    #                             tickangle=0,  # Rotate labels for better visibility, if needed
+    #                         ),
+    #                         yaxis=dict(title='Values'),
+    #                         # height=height,
+    #                         annotations=[
+    #                             dict(
+    #                                 x=0.5, y=0.5,
+    #                                 xref='paper', yref='paper',
+    #                                 text="There is no data to represent graphically",
+    #                                 showarrow=False,
+    #                                 font=dict(size=20, color='black'),
+    #                                 align='center'
+    #                             )
+    #                         ],
+    #                         bargap=0.3,
+    #                     )
+    #                     fig = go.Figure(data=[], layout=layout)
+    #                     st.plotly_chart(fig)
+
+    #                 else:
+    #                     traces1 = []
+
+    #                     traces1.append(go.Bar(
+    #                         x=combined_df.index,
+    #                         y=combined_df['PIU'], 
+    #                         name=f'PIU',
+    #                         orientation='v',
+    #                         marker=dict(color='blue'),
+    #                         text=combined_df['PIU'],
+    #                         textposition='outside',
+    #                         cliponaxis=False
+    #                     ))
+    #                     traces1.append(go.Bar(
+    #                         x=combined_df.index,
+    #                         y=combined_df['RA'],
+    #                         name=f'RA',
+    #                         orientation='v',
+    #                         marker=dict(color='green'),
+    #                         text=combined_df['RA'],
+    #                         textposition='outside',
+    #                         cliponaxis=False
+    #                     ))
+    #                     traces1.append(go.Bar(
+    #                         x=combined_df.index,
+    #                         y=combined_df['Gap Analysis'],
+    #                         name=f'Gap Analysis',
+    #                         orientation='v',
+    #                         marker=dict(color='red'),
+    #                         text=combined_df['Gap Analysis'],
+    #                         textposition='outside',
+    #                         cliponaxis=False
+    #                     ))
+
+    #                     height = 300 if (len(combined_df) == 1) else len(combined_df) * 150
+
+    #                     layout = go.Layout(
+    #                         title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
+    #                         barmode='group',
+    #                         xaxis=dict(
+    #                             title='Furniture Assets',
+    #                             tickvals=combined_df.index,  # The positions of the ticks on the x-axis
+    #                             ticktext=x_labels_with_br,  # Labels with line breaks
+    #                             tickangle=0,  # Rotate labels for better visibility, if needed
+    #                         ),
+    #                         yaxis=dict(title='Values'),
+    #                         # height=height,
+    #                         shapes=[
+    #                             dict(
+    #                                 type='line',
+    #                                 x0=0, x1=1,
+    #                                 y0=0, y1=0,
+    #                                 yref='y', xref='paper',
+    #                                 line=dict(
+    #                                     color='black',
+    #                                     width=2,
+    #                                 ),
+    #                             )
+    #                         ],
+    #                         bargap=0.4,
+    #                     )
+    #                     fig = go.Figure(data=traces1, layout=layout)
+    #                     st.plotly_chart(fig)
+
+
+    #         # ##################### 
+    #         # ## Download as Word
+    #         # #####################
+    #         if st.button('Generate Chainage Wise Report(Furniture Assets)'):
+    #             with st.spinner('Generating Report...'):
+    #                 data = {}
+    #                 for Chainage_filter4 in ["All"] + list(Chainage_values3):
                             
-                        if Chainage_filter4 != "All":
-                            filtered_data1 = final_data1_new[final_data1_new['Processed_Chainage'] == Chainage_filter4]
-                            filtered_data2 = final_data2_new[final_data2_new['Processed_Chainage'] == Chainage_filter4]
+    #                     if Chainage_filter4 != "All":
+    #                         filtered_data1 = final_data1_new[final_data1_new['Processed_Chainage'] == Chainage_filter4]
+    #                         filtered_data2 = final_data2_new[final_data2_new['Processed_Chainage'] == Chainage_filter4]
 
-                            data1 = filtered_data1.copy()
-                            data2 = filtered_data2.copy()
+    #                         data1 = filtered_data1.copy()
+    #                         data2 = filtered_data2.copy()
 
-                            data1 = data1.drop(columns=['Processed_Chainage','Road Section'])
-                            data2 = data2.drop(columns=['Processed_Chainage','Road Section'])
-
-
-                            grouped_data1 = data1.groupby(['Chainage']).sum().reset_index()
-                            grouped_data2 = data2.groupby(['Chainage']).sum().reset_index()
-
-                            transposed_data1 = grouped_data1.transpose()
-                            transposed_data2 = grouped_data2.transpose()
-
-                            transposed_data1.columns = transposed_data1.iloc[0]
-                            transposed_data1 = transposed_data1.iloc[1:]
-
-                            transposed_data2.columns = transposed_data2.iloc[0]
-                            transposed_data2 = transposed_data2.iloc[1:]
-
-                            transposed_data1['LHS+RHS'] = transposed_data1.sum(axis=1)
-                            transposed_data2['LHS+RHS'] = transposed_data2.sum(axis=1)
-
-                            gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
-
-                            #### Graphical Representation
-                            figs = []
-                            for i in range(len(transposed_data1.columns)):
-                                combined_df = pd.DataFrame({
-                                    'PIU': transposed_data1[transposed_data1.columns[i]],
-                                    'RA': transposed_data2[transposed_data1.columns[i]],
-                                    'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
-                                })
-                                combined_df = combined_df[(combined_df != 0).any(axis=1)]
-                                x_labels = combined_df.index
-                                index_map = {
-                                    'Chevron': 'Chevron',
-                                    'Cautionary Warning Signs': 'Cautionary <br>Warning Signs',
-                                    'Hazard': 'Hazard',
-                                    'Prohibitory Mandatory Signs': 'Prohibitory <br>Mandatory Signs',
-                                    'Informatory Signs': 'Informatory <br>Signs',
-                                }
-
-                                x_labels_with_br = [index_map.get(label, label) for label in combined_df.index]
+    #                         data1 = data1.drop(columns=['Processed_Chainage','Road Section'])
+    #                         data2 = data2.drop(columns=['Processed_Chainage','Road Section'])
 
 
-                                if combined_df.empty:
-                                    height = 300
+    #                         grouped_data1 = data1.groupby(['Chainage']).sum().reset_index()
+    #                         grouped_data2 = data2.groupby(['Chainage']).sum().reset_index()
 
-                                    layout = go.Layout(
-                                        title=f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}",
-                                        barmode='group',
-                                        xaxis=dict(
-                                            title='Furniture Assets',
-                                            tickvals=combined_df.index,  # The positions of the ticks on the x-axis
-                                            ticktext=x_labels_with_br,  # Labels with line breaks
-                                            tickangle=0,  # Rotate labels for better visibility, if needed
-                                        ),
-                                        yaxis=dict(title='Values'),
-                                        # height=height,
-                                        annotations=[
-                                            dict(
-                                                x=0.5, y=0.5,
-                                                xref='paper', yref='paper',
-                                                text="There is no data to represent graphically",
-                                                showarrow=False,
-                                                font=dict(size=20, color='black'),
-                                                align='center'
-                                            )
-                                        ],
-                                        bargap=0.3,
-                                    )
-                                    fig = go.Figure(data=[], layout=layout)
-                                    figs.append(fig)
+    #                         transposed_data1 = grouped_data1.transpose()
+    #                         transposed_data2 = grouped_data2.transpose()
 
-                                else:
-                                    traces1 = []
+    #                         transposed_data1.columns = transposed_data1.iloc[0]
+    #                         transposed_data1 = transposed_data1.iloc[1:]
 
-                                    traces1.append(go.Bar(
-                                        x=combined_df.index,
-                                        y=combined_df['PIU'], 
-                                        name=f'PIU',
-                                        orientation='v',
-                                        marker=dict(color='blue'),
-                                        text=combined_df['PIU'],
-                                        textposition='outside',
-                                    ))
-                                    traces1.append(go.Bar(
-                                        x=combined_df.index,
-                                        y=combined_df['RA'],
-                                        name=f'RA',
-                                        orientation='v',
-                                        marker=dict(color='green'),
-                                        text=combined_df['RA'],
-                                        textposition='outside',
-                                    ))
-                                    traces1.append(go.Bar(
-                                        x=combined_df.index,
-                                        y=combined_df['Gap Analysis'],
-                                        name=f'Gap Analysis',
-                                        orientation='v',
-                                        marker=dict(color='red'),
-                                        text=combined_df['Gap Analysis'],
-                                        textposition='outside',
-                                    ))
+    #                         transposed_data2.columns = transposed_data2.iloc[0]
+    #                         transposed_data2 = transposed_data2.iloc[1:]
 
-                            
+    #                         transposed_data1['LHS+RHS'] = transposed_data1.sum(axis=1)
+    #                         transposed_data2['LHS+RHS'] = transposed_data2.sum(axis=1)
 
-                                    height = 300 if (len(combined_df) == 1) else len(combined_df) * 120
+    #                         gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
 
-                                    if i == 2:
-                                        title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[0]}(LHS + RHS)"
-                                    else:
-                                        title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}"
+    #                         #### Graphical Representation
+    #                         figs = []
+    #                         for i in range(len(transposed_data1.columns)):
+    #                             combined_df = pd.DataFrame({
+    #                                 'PIU': transposed_data1[transposed_data1.columns[i]],
+    #                                 'RA': transposed_data2[transposed_data1.columns[i]],
+    #                                 'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
+    #                             })
+    #                             combined_df = combined_df[(combined_df != 0).any(axis=1)]
+    #                             x_labels = combined_df.index
+    #                             index_map = {
+    #                                 'Chevron': 'Chevron',
+    #                                 'Cautionary Warning Signs': 'Cautionary <br>Warning Signs',
+    #                                 'Hazard': 'Hazard',
+    #                                 'Prohibitory Mandatory Signs': 'Prohibitory <br>Mandatory Signs',
+    #                                 'Informatory Signs': 'Informatory <br>Signs',
+    #                             }
 
-                                    layout = go.Layout(
-                                        title= title,
-                                        barmode='group',
-                                        xaxis=dict(
-                                            title='Furniture Assets',
-                                            tickvals=combined_df.index,  # The positions of the ticks on the x-axis
-                                            ticktext=x_labels_with_br,  # Labels with line breaks
-                                            tickangle=0,  # Rotate labels for better visibility, if needed
-                                        ),
-                                        yaxis=dict(title='Values'),
-                                        # height=height,
-                                        # margin=dict(
-                                        #     l=310,  # Left margin to give space for y-axis labels
-                                        # ),
-                                        shapes=[
-                                            dict(
-                                                type='line',
-                                                x0=0, x1=1,
-                                                y0=0, y1=0,
-                                                yref='y', xref='paper',
-                                                line=dict(
-                                                    color='black',
-                                                    width=2,
-                                                ),
-                                            )
-                                        ],
-                                        bargap=0.2,
-                                    )
-                                    fig = go.Figure(data=traces1, layout=layout)
-                                    figs.append(fig)
-
-                            # Reset index for both DataFrames and assign a name to the new column
-                            transposed_data1_reset = transposed_data1.reset_index()
-                            transposed_data2_reset = transposed_data2.reset_index()
-                            gap_analysis_reset = gap_analysis.reset_index()
-
-                            # Optionally, rename the index column to 'Furniture Assets' or any other desired name
-                            transposed_data1_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
-                            transposed_data2_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
-                            gap_analysis_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
-
-                            data[Chainage_filter4] = (transposed_data1_reset, transposed_data2_reset, gap_analysis_reset, fig)
-
-                        else:
-                            data1 = final_data1_new.copy()
-                            data2 = final_data2_new.copy()
-
-                            data1 = data1.drop(columns=['Chainage','Processed_Chainage','Road Section'])
-                            data2 = data2.drop(columns=['Chainage','Processed_Chainage','Road Section'])
-
-                            transposed_data1 = pd.DataFrame(data1.sum(axis=0))
-                            transposed_data2 = pd.DataFrame(data2.sum(axis=0))
-
-                            transposed_data1.columns = ['LHS + RHS']
-                            transposed_data2.columns = ['LHS + RHS']
+    #                             x_labels_with_br = [index_map.get(label, label) for label in combined_df.index]
 
 
+    #                             if combined_df.empty:
+    #                                 height = 300
 
-                            gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
+    #                                 layout = go.Layout(
+    #                                     title=f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}",
+    #                                     barmode='group',
+    #                                     xaxis=dict(
+    #                                         title='Furniture Assets',
+    #                                         tickvals=combined_df.index,  # The positions of the ticks on the x-axis
+    #                                         ticktext=x_labels_with_br,  # Labels with line breaks
+    #                                         tickangle=0,  # Rotate labels for better visibility, if needed
+    #                                     ),
+    #                                     yaxis=dict(title='Values'),
+    #                                     # height=height,
+    #                                     annotations=[
+    #                                         dict(
+    #                                             x=0.5, y=0.5,
+    #                                             xref='paper', yref='paper',
+    #                                             text="There is no data to represent graphically",
+    #                                             showarrow=False,
+    #                                             font=dict(size=20, color='black'),
+    #                                             align='center'
+    #                                         )
+    #                                     ],
+    #                                     bargap=0.3,
+    #                                 )
+    #                                 fig = go.Figure(data=[], layout=layout)
+    #                                 figs.append(fig)
 
-                            #### Graphical Representation
-                            figs = []
-                            for i in range(len(transposed_data1.columns)):
-                                combined_df = pd.DataFrame({
-                                    'PIU': transposed_data1[transposed_data1.columns[i]],
-                                    'RA': transposed_data2[transposed_data1.columns[i]],
-                                    'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
-                                })
-                                combined_df = combined_df[(combined_df != 0).any(axis=1)]
+    #                             else:
+    #                                 traces1 = []
 
-                                x_labels = combined_df.index
-                                index_map = {
-                                    'Chevron': 'Chevron',
-                                    'Cautionary Warning Signs': 'Cautionary <br>Warning Signs',
-                                    'Hazard': 'Hazard',
-                                    'Prohibitory Mandatory Signs': 'Prohibitory <br>Mandatory Signs',
-                                    'Informatory Signs': 'Informatory <br>Signs',
-                                }
-
-                                x_labels_with_br = [index_map.get(label, label) for label in combined_df.index]
-
-
-                                if combined_df.empty:
-                                    height = 300
-
-                                    layout = go.Layout(
-                                        title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
-                                        barmode='group',
-                                        xaxis=dict(
-                                            title='Furniture Assets',
-                                            tickvals=combined_df.index,  # The positions of the ticks on the x-axis
-                                            ticktext=x_labels_with_br,  # Labels with line breaks
-                                            tickangle=0,  # Rotate labels for better visibility, if needed
-                                        ),
-                                        yaxis=dict(title='Values'),
-                                        # height=height,
-                                        annotations=[
-                                            dict(
-                                                x=0.5, y=0.5,
-                                                xref='paper', yref='paper',
-                                                text="There is no data to represent graphically",
-                                                showarrow=False,
-                                                font=dict(size=20, color='black'),
-                                                align='center'
-                                            )
-                                        ],
-                                        bargap=0.3,
-                                    )
-                                    fig = go.Figure(data=[], layout=layout)
-                                    figs.append(fig)
-
-
-
-
-                                else:
-                                    traces1 = []
-
-                                    traces1.append(go.Bar(
-                                        x=combined_df.index,
-                                        y=combined_df['PIU'], 
-                                        name=f'PIU',
-                                        orientation='v',
-                                        marker=dict(color='blue'),
-                                        text=combined_df['PIU'],
-                                        textposition='outside',
-                                        cliponaxis=False
-                                    ))
-                                    traces1.append(go.Bar(
-                                        x=combined_df.index,
-                                        y=combined_df['RA'],
-                                        name=f'RA',
-                                        orientation='v',
-                                        marker=dict(color='green'),
-                                        text=combined_df['RA'],
-                                        textposition='outside',
-                                        cliponaxis=False
-                                    ))
-                                    traces1.append(go.Bar(
-                                        x=combined_df.index,
-                                        y=combined_df['Gap Analysis'],
-                                        name=f'Gap Analysis',
-                                        orientation='v',
-                                        marker=dict(color='red'),
-                                        text=combined_df['Gap Analysis'],
-                                        textposition='outside',
-                                        cliponaxis=False
-                                    ))
+    #                                 traces1.append(go.Bar(
+    #                                     x=combined_df.index,
+    #                                     y=combined_df['PIU'], 
+    #                                     name=f'PIU',
+    #                                     orientation='v',
+    #                                     marker=dict(color='blue'),
+    #                                     text=combined_df['PIU'],
+    #                                     textposition='outside',
+    #                                 ))
+    #                                 traces1.append(go.Bar(
+    #                                     x=combined_df.index,
+    #                                     y=combined_df['RA'],
+    #                                     name=f'RA',
+    #                                     orientation='v',
+    #                                     marker=dict(color='green'),
+    #                                     text=combined_df['RA'],
+    #                                     textposition='outside',
+    #                                 ))
+    #                                 traces1.append(go.Bar(
+    #                                     x=combined_df.index,
+    #                                     y=combined_df['Gap Analysis'],
+    #                                     name=f'Gap Analysis',
+    #                                     orientation='v',
+    #                                     marker=dict(color='red'),
+    #                                     text=combined_df['Gap Analysis'],
+    #                                     textposition='outside',
+    #                                 ))
 
                             
 
-                                    height = 300 if (len(combined_df) == 1) else len(combined_df) * 120
+    #                                 height = 300 if (len(combined_df) == 1) else len(combined_df) * 120
 
-                                    layout = go.Layout(
-                                        title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
-                                        barmode='group',
-                                        xaxis=dict(
-                                            title='Furniture Assets',
-                                            tickvals=combined_df.index,  # The positions of the ticks on the x-axis
-                                            ticktext=x_labels_with_br,  # Labels with line breaks
-                                            tickangle=0,  # Rotate labels for better visibility, if needed
-                                        ),
-                                        yaxis=dict(title='Values'),
-                                        # height=height,
-                                        # margin=dict(
-                                        #     l=310,
-                                        # ),
-                                        shapes=[
-                                            dict(
-                                                type='line',
-                                                x0=0, x1=1,
-                                                y0=0, y1=0,
-                                                yref='y', xref='paper',
-                                                line=dict(
-                                                    color='black',
-                                                    width=2,
-                                                ),
-                                            )
-                                        ],
-                                        bargap=0.2,
-                                    )
-                                    fig = go.Figure(data=traces1, layout=layout)
+    #                                 if i == 2:
+    #                                     title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[0]}(LHS + RHS)"
+    #                                 else:
+    #                                     title = f"Graphical Representation of Analyzed Data for Chainage = {transposed_data1.columns[i]}"
 
-                                    figs.append(fig)
+    #                                 layout = go.Layout(
+    #                                     title= title,
+    #                                     barmode='group',
+    #                                     xaxis=dict(
+    #                                         title='Furniture Assets',
+    #                                         tickvals=combined_df.index,  # The positions of the ticks on the x-axis
+    #                                         ticktext=x_labels_with_br,  # Labels with line breaks
+    #                                         tickangle=0,  # Rotate labels for better visibility, if needed
+    #                                     ),
+    #                                     yaxis=dict(title='Values'),
+    #                                     # height=height,
+    #                                     # margin=dict(
+    #                                     #     l=310,  # Left margin to give space for y-axis labels
+    #                                     # ),
+    #                                     shapes=[
+    #                                         dict(
+    #                                             type='line',
+    #                                             x0=0, x1=1,
+    #                                             y0=0, y1=0,
+    #                                             yref='y', xref='paper',
+    #                                             line=dict(
+    #                                                 color='black',
+    #                                                 width=2,
+    #                                             ),
+    #                                         )
+    #                                     ],
+    #                                     bargap=0.2,
+    #                                 )
+    #                                 fig = go.Figure(data=traces1, layout=layout)
+    #                                 figs.append(fig)
+
+    #                         # Reset index for both DataFrames and assign a name to the new column
+    #                         transposed_data1_reset = transposed_data1.reset_index()
+    #                         transposed_data2_reset = transposed_data2.reset_index()
+    #                         gap_analysis_reset = gap_analysis.reset_index()
+
+    #                         # Optionally, rename the index column to 'Furniture Assets' or any other desired name
+    #                         transposed_data1_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
+    #                         transposed_data2_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
+    #                         gap_analysis_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
+
+    #                         data[Chainage_filter4] = (transposed_data1_reset, transposed_data2_reset, gap_analysis_reset, fig)
+
+    #                     else:
+    #                         data1 = final_data1_new.copy()
+    #                         data2 = final_data2_new.copy()
+
+    #                         data1 = data1.drop(columns=['Chainage','Processed_Chainage','Road Section'])
+    #                         data2 = data2.drop(columns=['Chainage','Processed_Chainage','Road Section'])
+
+    #                         transposed_data1 = pd.DataFrame(data1.sum(axis=0))
+    #                         transposed_data2 = pd.DataFrame(data2.sum(axis=0))
+
+    #                         transposed_data1.columns = ['LHS + RHS']
+    #                         transposed_data2.columns = ['LHS + RHS']
+
+
+
+    #                         gap_analysis = transposed_data1.subtract(transposed_data2, fill_value=0)
+
+    #                         #### Graphical Representation
+    #                         figs = []
+    #                         for i in range(len(transposed_data1.columns)):
+    #                             combined_df = pd.DataFrame({
+    #                                 'PIU': transposed_data1[transposed_data1.columns[i]],
+    #                                 'RA': transposed_data2[transposed_data1.columns[i]],
+    #                                 'Gap Analysis': gap_analysis[transposed_data1.columns[i]],
+    #                             })
+    #                             combined_df = combined_df[(combined_df != 0).any(axis=1)]
+
+    #                             x_labels = combined_df.index
+    #                             index_map = {
+    #                                 'Chevron': 'Chevron',
+    #                                 'Cautionary Warning Signs': 'Cautionary <br>Warning Signs',
+    #                                 'Hazard': 'Hazard',
+    #                                 'Prohibitory Mandatory Signs': 'Prohibitory <br>Mandatory Signs',
+    #                                 'Informatory Signs': 'Informatory <br>Signs',
+    #                             }
+
+    #                             x_labels_with_br = [index_map.get(label, label) for label in combined_df.index]
+
+
+    #                             if combined_df.empty:
+    #                                 height = 300
+
+    #                                 layout = go.Layout(
+    #                                     title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
+    #                                     barmode='group',
+    #                                     xaxis=dict(
+    #                                         title='Furniture Assets',
+    #                                         tickvals=combined_df.index,  # The positions of the ticks on the x-axis
+    #                                         ticktext=x_labels_with_br,  # Labels with line breaks
+    #                                         tickangle=0,  # Rotate labels for better visibility, if needed
+    #                                     ),
+    #                                     yaxis=dict(title='Values'),
+    #                                     # height=height,
+    #                                     annotations=[
+    #                                         dict(
+    #                                             x=0.5, y=0.5,
+    #                                             xref='paper', yref='paper',
+    #                                             text="There is no data to represent graphically",
+    #                                             showarrow=False,
+    #                                             font=dict(size=20, color='black'),
+    #                                             align='center'
+    #                                         )
+    #                                     ],
+    #                                     bargap=0.3,
+    #                                 )
+    #                                 fig = go.Figure(data=[], layout=layout)
+    #                                 figs.append(fig)
+
+
+
+
+    #                             else:
+    #                                 traces1 = []
+
+    #                                 traces1.append(go.Bar(
+    #                                     x=combined_df.index,
+    #                                     y=combined_df['PIU'], 
+    #                                     name=f'PIU',
+    #                                     orientation='v',
+    #                                     marker=dict(color='blue'),
+    #                                     text=combined_df['PIU'],
+    #                                     textposition='outside',
+    #                                     cliponaxis=False
+    #                                 ))
+    #                                 traces1.append(go.Bar(
+    #                                     x=combined_df.index,
+    #                                     y=combined_df['RA'],
+    #                                     name=f'RA',
+    #                                     orientation='v',
+    #                                     marker=dict(color='green'),
+    #                                     text=combined_df['RA'],
+    #                                     textposition='outside',
+    #                                     cliponaxis=False
+    #                                 ))
+    #                                 traces1.append(go.Bar(
+    #                                     x=combined_df.index,
+    #                                     y=combined_df['Gap Analysis'],
+    #                                     name=f'Gap Analysis',
+    #                                     orientation='v',
+    #                                     marker=dict(color='red'),
+    #                                     text=combined_df['Gap Analysis'],
+    #                                     textposition='outside',
+    #                                     cliponaxis=False
+    #                                 ))
+
+                            
+
+    #                                 height = 300 if (len(combined_df) == 1) else len(combined_df) * 120
+
+    #                                 layout = go.Layout(
+    #                                     title=f"Graphical Representation of Analyzed Data for all Chainages ({transposed_data1.columns[i]})",
+    #                                     barmode='group',
+    #                                     xaxis=dict(
+    #                                         title='Furniture Assets',
+    #                                         tickvals=combined_df.index,  # The positions of the ticks on the x-axis
+    #                                         ticktext=x_labels_with_br,  # Labels with line breaks
+    #                                         tickangle=0,  # Rotate labels for better visibility, if needed
+    #                                     ),
+    #                                     yaxis=dict(title='Values'),
+    #                                     # height=height,
+    #                                     # margin=dict(
+    #                                     #     l=310,
+    #                                     # ),
+    #                                     shapes=[
+    #                                         dict(
+    #                                             type='line',
+    #                                             x0=0, x1=1,
+    #                                             y0=0, y1=0,
+    #                                             yref='y', xref='paper',
+    #                                             line=dict(
+    #                                                 color='black',
+    #                                                 width=2,
+    #                                             ),
+    #                                         )
+    #                                     ],
+    #                                     bargap=0.2,
+    #                                 )
+    #                                 fig = go.Figure(data=traces1, layout=layout)
+
+    #                                 figs.append(fig)
                         
-                            # Reset index for both DataFrames and assign a name to the new column
-                            transposed_data1_reset = transposed_data1.reset_index()
-                            transposed_data2_reset = transposed_data2.reset_index()
-                            gap_analysis_reset = gap_analysis.reset_index()
+    #                         # Reset index for both DataFrames and assign a name to the new column
+    #                         transposed_data1_reset = transposed_data1.reset_index()
+    #                         transposed_data2_reset = transposed_data2.reset_index()
+    #                         gap_analysis_reset = gap_analysis.reset_index()
 
-                            # Optionally, rename the index column to 'Furniture Assets' or any other desired name
-                            transposed_data1_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
-                            transposed_data2_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
-                            gap_analysis_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
+    #                         # Optionally, rename the index column to 'Furniture Assets' or any other desired name
+    #                         transposed_data1_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
+    #                         transposed_data2_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
+    #                         gap_analysis_reset.rename(columns={'index': 'Furniture Assets'}, inplace=True)
 
-                            data[Chainage_filter4] = (transposed_data1_reset, transposed_data2_reset, gap_analysis_reset, fig)
+    #                         data[Chainage_filter4] = (transposed_data1_reset, transposed_data2_reset, gap_analysis_reset, fig)
 
-                    create_word_doc(data, file_name="Chainage_Wise_Analyzed_Data.docx")
-                    st.success('Report generated successfully!')
-                    with open("Chainage_Wise_Analyzed_Data.docx", "rb") as file:
-                        st.download_button("Chainage_Wise_Analyzed_Data.docx", file, "Chainage_Wise_Analyzed_Data.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    #                 create_word_doc(data, file_name="Chainage_Wise_Analyzed_Data.docx")
+    #                 st.success('Report generated successfully!')
+    #                 with open("Chainage_Wise_Analyzed_Data.docx", "rb") as file:
+    #                     st.download_button("Chainage_Wise_Analyzed_Data.docx", file, "Chainage_Wise_Analyzed_Data.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 
 
-    if choice == 'New Template':
+
+    if choice == 'Home':
         st.title("Furniture Chainage Report")
 
         st.header("Upload PIU Excel File")
@@ -1399,14 +1401,17 @@ def main():
 
         st.header("Upload RSA Excel File")
         type_r_file = st.file_uploader("Upload RSA Excel file", type=["xlsx", "xls"])
+        
 
         if type_r_file is not None and type_a_file is not None:
-            with open('temp.xlsx', 'wb') as f:
-                    # Write the uploaded file content to 'temp.xlsx'
-                    shutil.copyfileobj(type_r_file, f)
+            # with open('temp.xlsx', 'wb') as f:
+            #         # Write the uploaded file content to 'temp.xlsx'
+            #         shutil.copyfileobj(type_r_file, f)
             try:
+                # range_tuples = [(int(start.strip()), int(end.strip())) for r in Chainage_values1 for start, end in [r.split('-')]]
+                # rsa_df,rsa_df_new = rsa_process('temp.xlsx',range_tuples)
                 range_tuples = [(int(start.strip()), int(end.strip())) for r in Chainage_values1 for start, end in [r.split('-')]]
-                rsa_df,rsa_df_new = rsa_process('temp.xlsx',range_tuples)
+                rsa_df,rsa_df_new = rsa_process(type_r_file,range_tuples)
                 st.write("Data from RSA Excel file:")
 
                 if 'Chainage' in rsa_df.columns:
@@ -2094,7 +2099,7 @@ def main():
                                         x=combined_df.index,
                                         y=combined_df['NHAI'], 
                                         name=f'NHAI Record',
-                                        marker=dict(color='#262240'),
+                                        marker=dict(color='#fc8403'),
                                         text=combined_df['NHAI'],
                                         textposition='outside',
                                         cliponaxis=False,
@@ -2104,7 +2109,7 @@ def main():
                                         x=combined_df.index,
                                         y=combined_df['AI'],
                                         name=f'AI Survey',
-                                        marker=dict(color='#953fae'),
+                                        marker=dict(color='#037ffc'),
                                         text=combined_df['AI'],
                                         textposition='outside',
                                         cliponaxis=False,
@@ -2114,7 +2119,7 @@ def main():
                                         x=combined_df.index,
                                         y=combined_df['RSA'],
                                         name=f'RSA Recommendations',
-                                        marker=dict(color='#ff7c28'),
+                                        marker=dict(color='#1f8f17'),
                                         text=combined_df['RSA'],
                                         textposition='outside',
                                         cliponaxis=False,
@@ -2286,7 +2291,7 @@ def main():
                             total_rows = total_rows.astype(int)
 
                             fig = go.Figure()
-                            colors = ['#262240', '#953fae', '#ff7c28']
+                            colors = ['#fc8403', '#037ffc', '#1f8f17']
 
                             # Add a bar for each column in the 'Total' row
                             for i, column in enumerate(total_row.index):
@@ -2315,7 +2320,7 @@ def main():
 
 
                             fig = go.Figure()
-                            colors = ['#262240', '#953fae', '#ff7c28']
+                            colors = ['#fc8403', '#037ffc', '#1f8f17']
 
                             # Add a bar for each column in the 'Total' row
                             for i, column in enumerate(total_rows.index):
@@ -2413,7 +2418,7 @@ def main():
                                         x=combined_df.index,
                                         y=combined_df['NHAI'], 
                                         name=f'NHAI Record',
-                                        marker=dict(color='#262240'),
+                                        marker=dict(color='#fc8403'),
                                         text=combined_df['NHAI'],
                                         textposition='outside',
                                         cliponaxis=False,
@@ -2423,7 +2428,7 @@ def main():
                                         x=combined_df.index,
                                         y=combined_df['AI'],
                                         name=f'AI Survey',
-                                        marker=dict(color='#953fae'),
+                                        marker=dict(color='#037ffc'),
                                         text=combined_df['AI'],
                                         textposition='outside',
                                         cliponaxis=False,
@@ -2433,7 +2438,7 @@ def main():
                                         x=combined_df.index,
                                         y=combined_df['RSA'],
                                         name=f'RSA Recommendations',
-                                        marker=dict(color='#ff7c28'),
+                                        marker=dict(color='#1f8f17'),
                                         text=combined_df['RSA'],
                                         textposition='outside',
                                         cliponaxis=False,
@@ -2529,10 +2534,9 @@ def main():
 
                             data[Chainage_filter4] = (final_df_reset, fig)
 
-                    create_word_doc_new(three_tables,Gap_study_report,moretables,morecharts, data, file_name="Chainage_Wise_Analyzed_Data.docx")
+                    doc_stream = create_word_doc_new(three_tables,Gap_study_report,moretables,morecharts, data, file_name="Chainage_Wise_Analyzed_Data.docx")
                     st.success('Report generated successfully!')
-                    with open("Chainage_Wise_Analyzed_Data.docx", "rb") as file:
-                        st.download_button("Chainage_Wise_Analyzed_Data.docx", file, "Chainage_Wise_Analyzed_Data.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+                    st.download_button("Chainage_Wise_Analyzed_Data.docx", doc_stream, "Chainage_Wise_Analyzed_Data.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 
 
 
