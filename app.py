@@ -7,7 +7,8 @@ import plotly.graph_objects as go
 import shutil
 import plotly.express as px
 def main():
-    activities = ["Home", "Old Template", "Devloper"]
+    # activities = ["Home", "Old Template", "Devloper"]
+    activities = ["Home", "Developer"]
     choice = st.sidebar.selectbox("Menu", activities)
 
     # if choice == 'Old Template':

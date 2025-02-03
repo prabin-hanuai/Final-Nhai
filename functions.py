@@ -1,4 +1,5 @@
 import pandas as pd
+import streamlit as st
 
 def RA_preprocess(temp):
     Furniture_Chainage_Report = {}
@@ -20,12 +21,12 @@ def RA_preprocess(temp):
         try:
             _data = temp['Furniture Chainage Report']['Furniture Assets'][type]
             for column in _data.columns:
-                if True in ['Overhead' in i for i in column]:
+                if True in ['overhead' in i.lower() for i in column]:
                     Furniture_Chainage_Report[f'{type} (Overhead)'] = _data[column].to_list()
                     overhead.append(type)
-                if True in ['Avenue' in i or 'Left' in i for i in column]:
+                if True in ['avenue' in i.lower() or 'left' in i.lower() for i in column]:
                     Furniture_Chainage_Report[f'{type} (Avenue/Left)'] = _data[column].to_list()
-                if True in ['Median' in i or 'Right' in i for i in column]:
+                if True in ['median' in i.lower() or 'right' in i.lower() for i in column]:
                     Furniture_Chainage_Report[f'{type} (Median/Right)'] = _data[column].to_list()
         except:
             continue
@@ -34,6 +35,11 @@ def RA_preprocess(temp):
     
     
     final_data = pd.DataFrame(Furniture_Chainage_Report)
+    na_data = final_data[final_data['Road Section'].isna()]
+    total_sum = na_data.select_dtypes(include='number').sum().sum()
+    if total_sum != 0:
+        st.write('Data is not in the correct format, check row with missing Road Section')
+
     final_data.dropna(subset=['Road Section'], inplace=True)
     final_data.replace('NONE', pd.NA, inplace=True)
     final_data.fillna(0,inplace = True)
