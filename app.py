@@ -6,6 +6,8 @@ from download_functions import save_chart_to_image, create_word_doc,create_word_
 import plotly.graph_objects as go
 import shutil
 import plotly.express as px
+
+st.set_option('client.showErrorDetails', True)
 def main():
     # activities = ["Home", "Old Template", "Devloper"]
     activities = ["Home", "Developer"]

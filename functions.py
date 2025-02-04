@@ -3,23 +3,27 @@ import streamlit as st
 
 def RA_preprocess(temp):
     Furniture_Chainage_Report = {}
-    chaing = temp['Furniture Chainage Report']['Chainage']
+    first_level_header = temp.columns.get_level_values(0).unique()[0]  # Fetch the first unique header
+    print("First level header:", first_level_header)
+    chaing = temp[first_level_header]['Chainage']
     chaing.iloc[:, 0] = chaing.iloc[:, 0].fillna(method='ffill')
     Chainage = chaing[chaing.columns[0]].to_list()
     Chainage_from = chaing[chaing.columns[1]].to_list()
     Chainage_to = chaing[chaing.columns[2]].to_list()
-    r_section = temp['Furniture Chainage Report']['Road Section']
+    r_section = temp[first_level_header]['Road Section']
     road_section = r_section[r_section.columns[0]].to_list()
     Furniture_Chainage_Report['Chainage'] = Chainage
     Furniture_Chainage_Report['Road Section'] = road_section
     # Furniture_Chainage_Report['Chainage (From)'] = Chainage_from
     # Furniture_Chainage_Report['Chainage (To)'] = Chainage_to
-    furniture_assets = ['Chevron','Cautionary Warning Signs','Hazard','Prohibitory Mandatory Signs','Informatory Signs']
+    furniture_assets = ['Chevron','Cautionary Warning Signs','Hazard','Prohibitory Mandatory Signs','Informatory Signs','CHEVRON','CAUTIONARY WARNING SIGNS','HAZARD','PROHIBITORY MANDATORY SIGNS','INFORMATORY SIGNS','Chevron ','Cautionary Warning Signs ','Hazard ','Prohibitory Mandatory Signs ','Informatory Signs ']
     overhead = []
+    st.dataframe(temp[first_level_header]['Furniture Assets'], use_container_width=True)
     for type in furniture_assets:
         
         try:
-            _data = temp['Furniture Chainage Report']['Furniture Assets'][type]
+            _data = temp[first_level_header]['Furniture Assets'][type]
+            type = type.strip().lower().title()
             for column in _data.columns:
                 if True in ['overhead' in i.lower() for i in column]:
                     Furniture_Chainage_Report[f'{type} (Overhead)'] = _data[column].to_list()
@@ -31,19 +35,21 @@ def RA_preprocess(temp):
         except:
             continue
 
-
-    
-    
     final_data = pd.DataFrame(Furniture_Chainage_Report)
-    na_data = final_data[final_data['Road Section'].isna()]
-    na_data = na_data.drop(columns = ['Road Section','Chainage'])
-    na_data = na_data.astype('str')
-    na_data = na_data.replace('NIL',pd.NA)
-    na_data = na_data.replace('nan',pd.NA)
-    na_data = na_data.replace('NONE',pd.NA)
 
-    total_sum = na_data.fillna('0')
-    rows_with_data = na_data[na_data.ne('0').any(axis=1)]
+    for col in final_data.columns:
+        if col not in ['Chainage', 'Road Section']:
+            final_data[col] = pd.to_numeric(final_data[col], errors='coerce') 
+    
+    na_data = final_data[final_data['Road Section'].isna()].copy()
+    na_data = na_data.drop(columns = ['Road Section','Chainage'])
+    # na_data = na_data.astype('str')
+    # na_data = na_data.replace('NIL',pd.NA)
+    # na_data = na_data.replace('nan',pd.NA)
+    # na_data = na_data.replace('NONE',pd.NA)
+
+    total_sum = na_data.fillna(0)
+    rows_with_data = na_data[na_data.sum(axis=1) != 0] 
     rows_with_data_indices = rows_with_data.index.tolist()
     total_sum = na_data.sum().sum()
     if total_sum != 0:
@@ -51,8 +57,8 @@ def RA_preprocess(temp):
         st.write('Rows with data present (non-zero) are at indices:', rows_with_data_indices)
 
     final_data.dropna(subset=['Road Section'], inplace=True)
-    final_data.replace('NONE', pd.NA, inplace=True)
-    final_data.replace('NIL', pd.NA, inplace=True)
+    # final_data.replace('NONE', pd.NA, inplace=True)
+    # final_data.replace('NIL', pd.NA, inplace=True)
     final_data.fillna(0,inplace = True)
     while overhead:
         _  = overhead.pop()
