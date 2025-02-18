@@ -23,7 +23,9 @@ def RA_preprocess(temp):
         
         try:
             _data = temp[first_level_header]['Furniture Assets'][type]
+            print('type:', type)
             type = type.strip().lower().title()
+            print('type after conversion:', type)
             for column in _data.columns:
                 if True in ['overhead' in i.lower() for i in column]:
                     Furniture_Chainage_Report[f'{type} (Overhead)'] = _data[column].to_list()
@@ -93,13 +95,6 @@ def RA_preprocess(temp):
     # Step 4: Efficiently aggregate columns based on the `columns_map`
     for new_col, old_cols in columns_map.items():
         final_data_new[new_col] = final_data[old_cols].sum(axis=1)
-
-    # Display the final DataFrame
-    print(final_data_new)
-
-
-
-
 
     return final_data,final_data_new
 

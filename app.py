@@ -1,17 +1,52 @@
 import streamlit as st
 import pandas as pd
 from functions import RA_preprocess, preprocess_chainage, get_text_position
-from RSA import rsa_process
+from RSA import rsa_process ,rsa_preprocess_fixed
 from download_functions import save_chart_to_image, create_word_doc,create_word_doc_new
 import plotly.graph_objects as go
 import shutil
 import plotly.express as px
+from openpyxl import load_workbook
 
 st.set_option('client.showErrorDetails', True)
 def main():
     # activities = ["Home", "Old Template", "Devloper"]
-    activities = ["Home", "Developer"]
+    activities = ["Home",'RSA Summary Generate', "Developer"]
     choice = st.sidebar.selectbox("Menu", activities)
+
+    if choice == "rsa":
+        st.title("RSA Excel File Processor")
+
+        uploaded_file = st.file_uploader("Upload an RSA Excel file", type=["xlsx"])
+
+        if uploaded_file is not None:
+            result_fixed = rsa_preprocess_fixed(uploaded_file)
+    
+            if result_fixed is not None and not result_fixed.empty:
+                st.write("Processed Data:")
+                st.dataframe(result_fixed)
+        
+                book = load_workbook(uploaded_file)
+
+                if "Summary" not in book.sheetnames:
+                
+                    return None
+
+                
+                with pd.ExcelWriter(uploaded_file, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+                    result_fixed.to_excel(writer, sheet_name="Summary", index=False, startrow=12)
+
+                
+        
+                st.download_button(label="Download Processed File",
+                                   data=uploaded_file.getvalue(),
+                                   file_name="Processed_RSA.xlsx",
+                                   mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            else:
+                st.error("No valid data found in the uploaded file!")
+
+
+
 
     # if choice == 'Old Template':
     #     # Set up the title of the app
@@ -2542,6 +2577,36 @@ def main():
                     st.download_button("Chainage_Wise_Analyzed_Data.docx", doc_stream, "Chainage_Wise_Analyzed_Data.docx", mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document")
 
 
+    if choice == "RSA Summary Generate":
+        st.title("RSA Excel File Processor")
+
+        uploaded_file = st.file_uploader("Upload an RSA Excel file", type=["xlsx"])
+
+        if uploaded_file is not None:
+            result_fixed = rsa_preprocess_fixed(uploaded_file)
+    
+            if result_fixed is not None and not result_fixed.empty:
+                st.write("Processed Data:")
+                st.dataframe(result_fixed)
+        
+                book = load_workbook(uploaded_file)
+
+                if "Summary" not in book.sheetnames:
+                
+                    return None
+
+                
+                with pd.ExcelWriter(uploaded_file, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
+                    result_fixed.to_excel(writer, sheet_name="Summary", index=False, startrow=12)
+
+                
+        
+                st.download_button(label="Download Processed File",
+                                   data=uploaded_file.getvalue(),
+                                   file_name="Processed_RSA.xlsx",
+                                   mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            else:
+                st.error("No valid data found in the uploaded file!")
 
 
 if __name__ == "__main__":

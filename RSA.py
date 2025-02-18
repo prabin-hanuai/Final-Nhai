@@ -54,6 +54,7 @@ def rsa_preprocess(excel_path, range_tuples):
                     return f"{end}-{start}"
             return None
         
+        
         final_df['Chainage'] = final_df['chainage'].apply(get_range)
         st.dataframe(final_df, use_container_width=True)
         grouped = final_df.groupby(['Chainage', 'type of sign board', location_col]).size().reset_index(name='count')
@@ -141,3 +142,95 @@ def rsa_process(excel_path, range):
         pivot_df_new[new_col] = pivot_df[old_cols].sum(axis=1)
 
     return pivot_df, pivot_df_new
+
+
+def rsa_preprocess_fixed(excel_path):
+    sheets = ['MCW LHS', 'MCW RHS', 'SRL', 'SRR', 'TL', 'IRL', 'IRR', 'TR', 'CR']
+    all_data = []
+    
+    for sheet in sheets:
+        try:
+            df = pd.read_excel(excel_path, sheet_name=sheet, header=[9], usecols="A:J").copy()
+            df.columns = df.columns.str.strip().str.lower()
+            
+            if 'signage discription' in df.columns:
+                df.rename(columns={'signage discription': 'signage description'}, inplace=True)
+            
+            location_col = None
+            if 'avenue/median/overhead' in df.columns:
+                location_col = 'avenue/median/overhead'
+            elif 'left/right/overhead' in df.columns:
+                location_col = 'left/right/overhead'
+            
+            if location_col is None:
+                continue
+            
+            required_cols = ['type of sign board', location_col, 'codal reference irc:67 - 2022', 'signage description']
+            if not all(col in df.columns for col in required_cols):
+                continue
+            
+            df = df[required_cols].copy()
+            df.dropna(subset=['codal reference irc:67 - 2022', 'signage description', location_col], inplace=True)
+            
+            if df.empty:
+                continue
+            
+            df[location_col] = df[location_col].astype(str).str.lower().str.strip()
+            location_mapping = {'avenue': 'Avenue/Left', 'left': 'Avenue/Left', 
+                                'median': 'Median/Right', 'right': 'Median/Right', 
+                                'overhead': 'Overhead'}
+            df[location_col] = df[location_col].map(location_mapping).fillna("Unknown")
+            
+            grouped = df.groupby(['codal reference irc:67 - 2022', 'signage description', location_col]).size().reset_index(name='count')
+            
+            pivot_df = grouped.pivot_table(index=['codal reference irc:67 - 2022', 'signage description'],
+                                           columns=location_col, values='count', aggfunc='sum', fill_value=0).reset_index()
+            
+            column_rename_map = {
+                'Avenue/Left': 'count (Avenue/Left)', 
+                'Median/Right': 'count (Median/Right)', 
+                'Overhead': 'count (Overhead)'
+            }
+            pivot_df.rename(columns={col: column_rename_map[col] for col in column_rename_map if col in pivot_df.columns}, inplace=True)
+            
+            for col in column_rename_map.values():
+                if col not in pivot_df.columns:
+                    pivot_df[col] = 0
+            
+            pivot_df['Total Count'] = pivot_df['count (Avenue/Left)'] + pivot_df['count (Median/Right)'] + pivot_df['count (Overhead)']
+            pivot_df['road section'] = sheet
+            
+            all_data.append(pivot_df)
+        except Exception as e:
+            continue
+    
+    if all_data:
+        combined_df = pd.concat(all_data, ignore_index=True)
+        
+        # Create final pivot table
+        pivot_df_fixed = combined_df.pivot_table(index=['codal reference irc:67 - 2022', 'signage description'],
+                                                 values=['count (Avenue/Left)', 'count (Median/Right)', 'count (Overhead)', 'Total Count'],
+                                                 aggfunc='sum',
+                                                 fill_value=0).reset_index()
+
+        # **Ensure Total Count is the last column**
+        final_column_order = ['codal reference irc:67 - 2022', 'signage description', 
+                              'count (Avenue/Left)', 'count (Median/Right)', 'count (Overhead)', 'Total Count']
+        pivot_df_fixed = pivot_df_fixed[final_column_order]
+
+        # Add a row for total sum at the bottom
+        total_row = {
+            'codal reference irc:67 - 2022': 'Grand Total',
+            'signage description': '',
+            'count (Avenue/Left)': pivot_df_fixed['count (Avenue/Left)'].sum(),
+            'count (Median/Right)': pivot_df_fixed['count (Median/Right)'].sum(),
+            'count (Overhead)': pivot_df_fixed['count (Overhead)'].sum(),
+            'Total Count': pivot_df_fixed['Total Count'].sum()
+        }
+        
+        pivot_df_fixed = pd.concat([pivot_df_fixed, pd.DataFrame([total_row])], ignore_index=True)
+
+        return pivot_df_fixed
+
+    else:
+        return None
