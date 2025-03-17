@@ -54,7 +54,7 @@ def show_main_page():
         
         **Data Analysis:**
         - Compare measurement methodologies:
-          * Vinci (manual) measurements
+          * Vinci (Expert) measurements
           * RoadAthena (AI) measurements
         
         **Statistical Metrics:**

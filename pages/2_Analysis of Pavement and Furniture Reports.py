@@ -92,7 +92,7 @@ def show_developer_page():
     st.write("- Uses Pandas for data processing")
     st.write("- Supports Excel file processing")
 
-def calculate_metrics(df):
+def calculate_metrics(df, angle_range):
     try:
         # Handle division by zero in relative error calculation
         epsilon = 1e-10
@@ -115,9 +115,9 @@ def calculate_metrics(df):
         # Calculate other metrics
         angles = np.degrees(np.arctan2(df['Roadathena Density'], df['Vinci Density']))
         zero_zero_mask = (df['Roadathena Density'] == 0) & (df['Vinci Density'] == 0)
-        angle_mask = ((35 <= angles) & (angles <= 55)) | \
-                     (np.isclose(angles, 35, rtol=1e-10)) | \
-                     (np.isclose(angles, 55, rtol=1e-10))
+        angle_mask = ((angle_range[0] <= angles) & (angles <= angle_range[1])) | \
+                     (np.isclose(angles, angle_range[0], rtol=1e-10)) | \
+                     (np.isclose(angles, angle_range[1], rtol=1e-10))
         good_points = zero_zero_mask | angle_mask
         total_points = len(df)
         good_points_count = np.sum(good_points)
@@ -133,6 +133,9 @@ def calculate_metrics(df):
 def show_main_page():
     st.title("Analysis of Pavement and Furniture Reports ")
     
+    # Define default angle range
+    default_angle_range = (35, 55)
+    
     # File upload
     uploaded_file = st.file_uploader("Upload your Excel file", type=['xlsx'])
     
@@ -140,6 +143,19 @@ def show_main_page():
         try:
             # Process the file
             df = process_excel_file(uploaded_file)
+
+            st.subheader("Analysis Settings")
+            settings_col1, settings_col2 = st.columns([2, 1])
+            
+            with settings_col1:
+                # Add range slider for angle selection
+                angle_range = st.slider(
+                    "Select angle range for agreement calculation (degrees)",
+                    min_value=0,
+                    max_value=90,
+                    value=default_angle_range,  # Use default values
+                    help="Points within this angle range (or at 0,0) will be considered in agreement"
+                )
             
             st.subheader("Filters")
             col1, col2, col3 = st.columns([1, 1, 1]) 
@@ -348,7 +364,7 @@ def show_main_page():
             st.subheader("Density Analysis")
             
             # Calculate metrics including point counts
-            pearson_corr, spearman_corr, mae, mse, rmse, mean_relative_error, agreement, good_points_count, total_points, r_squared = calculate_metrics(filtered_df)
+            pearson_corr, spearman_corr, mae, mse, rmse, mean_relative_error, agreement, good_points_count, total_points, r_squared = calculate_metrics(filtered_df, angle_range)
             
             # Display metrics with explanations
             st.write("### Statistical Metrics")
@@ -424,7 +440,7 @@ def show_main_page():
                 st.metric("Agreement Ratio", f"{agreement:.2%}")
                 st.markdown("""
                 **Formula:** (Good Points / Total Points)
-                - Points within 35-55° or at (0,0)
+                - Points within {angle_range[0]}-{angle_range[1]}° or at (0,0)
                 - Range: [0, 1]
                 """)
 
@@ -452,7 +468,7 @@ def show_main_page():
 
             # Agreement ratio analysis
             if agreement > 0.8:
-                analysis_points.append(f"✅ High agreement ratio ({agreement:.1%}) shows excellent consistency within 35-55° range.")
+                analysis_points.append(f"✅ High agreement ratio ({agreement:.1%}) shows excellent consistency within {angle_range[0]}-{angle_range[1]}° range.")
             elif agreement > 0.6:
                 analysis_points.append(f"⚠️ Moderate agreement ratio ({agreement:.1%}) indicates acceptable but improvable consistency.")
             else:
@@ -491,7 +507,7 @@ def show_main_page():
             st.subheader("Density Comparison (Scatter Plot)")
             st.write(f"""
             This scatter plot shows the relationship between Vinci and Roadathena density measurements:
-            - Green points: Measurements within 35-55 degree angle (good agreement)
+            - Green points: Measurements within {angle_range[0]}-{angle_range[1]} degree angle (good agreement)
             - Red points: Measurements outside ideal range
             - Points count: {good_points_count} good out of {total_points} total ({(good_points_count/total_points*100):.1f}%)
             - Perfect agreement would show points along a 45-degree line
@@ -505,9 +521,9 @@ def show_main_page():
             zero_zero_mask = (filtered_df['Roadathena Density'] == 0) & (filtered_df['Vinci Density'] == 0)
 
             # Create mask for points within angle range or on boundary lines
-            angle_mask = ((35 <= angles) & (angles <= 55)) | \
-                        (np.isclose(angles, 35, rtol=1e-10)) | \
-                        (np.isclose(angles, 55, rtol=1e-10))
+            angle_mask = ((angle_range[0] <= angles) & (angles <= angle_range[1])) | \
+                        (np.isclose(angles, angle_range[0], rtol=1e-10)) | \
+                        (np.isclose(angles, angle_range[1], rtol=1e-10))
 
             # Combine masks
             is_good_point = zero_zero_mask | angle_mask
@@ -522,22 +538,21 @@ def show_main_page():
             padding = max_val * 0.001
             axis_max = max_val + padding
 
-            # Calculate points for 35° and 55° lines
-            # tan(35°) ≈ 0.700, tan(55°) ≈ 1.428
+            # Calculate points for angle range lines
             x_values = np.linspace(0, axis_max, 100)
-            y_35deg = 0.700 * x_values  # 35 degree line
-            y_55deg = 1.428 * x_values  # 55 degree line
+            y_lower = np.tan(np.radians(angle_range[0])) * x_values  # Lower angle line
+            y_upper = np.tan(np.radians(angle_range[1])) * x_values  # Upper angle line
             
             # Modified scatter plot with square shape and all reference lines
             scatter_fig = {
                 'data': [
-                    # Green points (within 35-55 degrees or (0,0))
+                    # Green points (within angle range or (0,0))
                     {
                         'x': filtered_df[is_good_point]['Vinci Density'],
                         'y': filtered_df[is_good_point]['Roadathena Density'],
                         'mode': 'markers',
                         'type': 'scatter',
-                        'name': 'Within 35-55° or (0,0)',
+                        'name': f'Within {angle_range[0]}-{angle_range[1]}° or (0,0)',
                         'marker': {
                             'size': 8,
                             'opacity': 0.7,
@@ -552,13 +567,13 @@ def show_main_page():
                         ),
                         'hoverinfo': 'text'
                     },
-                    # Red points (outside 35-55 degrees and not (0,0))
+                    # Red points (outside angle range and not (0,0))
                     {
                         'x': filtered_df[~is_good_point]['Vinci Density'],
                         'y': filtered_df[~is_good_point]['Roadathena Density'],
                         'mode': 'markers',
                         'type': 'scatter',
-                        'name': 'Outside 35-55°',
+                        'name': f'Outside {angle_range[0]}-{angle_range[1]}°',
                         'marker': {
                             'size': 7,
                             'opacity': 0.7,
@@ -584,27 +599,27 @@ def show_main_page():
                         },
                         'name': '45° line'
                     },
-                    # 35-degree reference line
+                    # Lower angle reference line
                     {
                         'x': x_values,
-                        'y': y_35deg,
+                        'y': y_lower,
                         'mode': 'lines',
                         'line': {
                             'color': 'grey',
                             'dash': 'dot'
                         },
-                        'name': '35° line'
+                        'name': f'{angle_range[0]}° line'
                     },
-                    # 55-degree reference line
+                    # Upper angle reference line
                     {
                         'x': x_values,
-                        'y': y_55deg,
+                        'y': y_upper,
                         'mode': 'lines',
                         'line': {
                             'color': 'grey',
                             'dash': 'dot'
                         },
-                        'name': '55° line'
+                        'name': f'{angle_range[1]}° line'
                     }
                 ],
                 'layout': {
@@ -613,7 +628,6 @@ def show_main_page():
                         'showgrid': True,
                         'gridcolor': 'lightgray',
                         'range': [0, axis_max],
-                        # 'dtick': axis_max/10
                     },
                     'yaxis': {
                         'title': 'Roadathena Density',
@@ -622,7 +636,6 @@ def show_main_page():
                         'range': [0, axis_max],
                         'scaleanchor': 'x',
                         'scaleratio': 1,
-                        # 'dtick': axis_max/10
                     },
                     'title': 'Vinci vs Roadathena Density',
                     'hovermode': 'closest',
@@ -638,7 +651,7 @@ def show_main_page():
             st.markdown(f"""
             **Point Agreement Analysis:**
             - Total Points: {total_points}
-            - Points in Agreement (35-55°): {good_points_count}
+            - Points in Agreement ({angle_range[0]}-{angle_range[1]}°): {good_points_count}
             - Agreement Percentage: {(good_points_count/total_points*100):.1f}%
             - This indicates how many measurements fall within the acceptable range of agreement
             """)
