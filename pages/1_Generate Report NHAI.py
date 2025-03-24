@@ -1454,8 +1454,19 @@ def main():
             try:
                 # range_tuples = [(int(start.strip()), int(end.strip())) for r in Chainage_values1 for start, end in [r.split('-')]]
                 # rsa_df,rsa_df_new = rsa_process('temp.xlsx',range_tuples)
-                range_tuples = [(int(start.strip()), int(end.strip())) for r in Chainage_values1 for start, end in [r.split('-')]]
+                range_tuples = []
+                for r in Chainage_values1:
+                    try:
+                        # Attempt to split and convert the values
+                        start, end = r.split('-')
+                        range_tuples.append((int(start.strip()), int(end.strip())))
+                    except Exception as e:
+                        # If an error occurs, display the error and problematic value
+                        st.write(f"Error processing line: {r}")
+                        st.write(f"Error details: {e}")
+
                 rsa_df,rsa_df_new = rsa_process(type_r_file,range_tuples)
+                print('rsa_df',rsa_df)
                 st.write("Data from RSA Excel file:")
 
                 if 'Chainage' in rsa_df.columns:
