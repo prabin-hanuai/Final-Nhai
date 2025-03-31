@@ -1433,7 +1433,7 @@ def main():
                     else:
                         final_data2 = final_data2.drop(columns=['Processed_Chainage'])
                         st.write("Displaying whole data:")
-                        st.dataframe(final_data1, use_container_width=True)
+                        st.dataframe(final_data2, use_container_width=True)
                 else:
                     st.warning("The 'Chainage' column is not present in the RA Excel data.")
 
