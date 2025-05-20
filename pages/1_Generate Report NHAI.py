@@ -1510,7 +1510,7 @@ def main():
             final_data2_new['Processed_Chainage'] = final_data2_new['Chainage'].apply(preprocess_chainage)
             rsa_df_new['Processed_Chainage'] = rsa_df_new['Chainage'].apply(preprocess_chainage)
 
-            Chainage_values4 = final_data1_new['Processed_Chainage'].unique() 
+            Chainage_values4 = final_data2_new['Processed_Chainage'].unique() 
             Chainage_filter4 = st.selectbox("Select Chainage value to filter",["All"] + list(Chainage_values4), key="Chainage_filter4")
 
             if Chainage_filter4 != "All":
